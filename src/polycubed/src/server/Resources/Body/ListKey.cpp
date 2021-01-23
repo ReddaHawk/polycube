@@ -20,7 +20,7 @@
 #include <typeindex>
 #include <utility>
 #include <vector>
-
+#include <stdexcept>
 namespace polycube::polycubed::Rest::Resources::Body {
 ListKey::ListKey(
     LY_DATA_TYPE type, std::string name, std::string original_name,
