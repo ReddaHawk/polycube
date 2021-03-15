@@ -1,0 +1,94 @@
+module k8sdispatcher {
+  yang-version 1.1;
+  namespace "http://polycube.network/k8sdispatcher";
+  prefix "k8sdispatcher";
+
+  import polycube-base { prefix "polycube-base"; }
+  import polycube-standard-base { prefix "polycube-standard-base"; }
+
+  import ietf-inet-types { prefix "inet"; }
+
+  organization "Polycube open source project";
+  description "YANG data model for the Polycube dispatcher for Kubernetes";
+
+  polycube-base:service-description "Kubernetes k8sdispatcher Service";
+  polycube-base:service-version "2.0.0";
+  polycube-base:service-name "k8sdispatcher";
+  polycube-base:service-min-kernel-version "4.14.0";
+
+  uses "polycube-standard-base:standard-base-yang-module" {
+    augment ports {
+      leaf type {
+        type enumeration {
+          enum BACKEND { description "Port connected to cni topology"; }
+          enum FRONTEND { description "Port connected to NIC"; }
+        }
+        mandatory true;
+        description "Type of the k8sdispatcher port (e.g. BACKEND or FRONTEND)";
+      }
+    }
+  }
+
+  leaf cluster-ip-subnet {
+    type inet:ipv4-prefix;
+    description "Range of VIPs where clusterIP services are exposed";
+    polycube-base:cli-example "10.96.0.0/12";
+    mandatory true;
+  }
+
+  leaf client-subnet {
+    type inet:ipv4-prefix;
+    description "Range of IPs of pods in this node";
+    polycube-base:cli-example "192.168.1.0/24";
+    mandatory true;
+  }
+
+  leaf virtual-client-subnet {
+    type inet:ipv4-prefix;
+    description "Range where client's IPs are mapped into";
+    polycube-base:cli-example "10.10.1.0/24";
+    mandatory true;
+  }
+
+  list natting-table {
+        key "internal-src internal-dst internal-sport internal-dport proto";
+
+        leaf internal-src {
+            type inet:ipv4-address;
+            description "Source IP address";
+        }
+        leaf internal-dst {
+            type inet:ipv4-address;
+            description "Destination IP address";
+        }
+        leaf internal-sport {
+            type inet:port-number;
+            description "Source L4 port number";
+        }
+        leaf internal-dport {
+            type inet:port-number;
+            description "Destination L4 port number";
+        }
+        leaf proto {
+            type string;
+            description "L4 protocol";
+        }
+        leaf external-ip {
+            type inet:ipv4-address;
+            description "Translated IP address";
+        }
+        leaf external-port {
+            type inet:port-number;
+            description "Translated L4 port number";
+        }
+    }
+
+  leaf nodeport-range {
+    type string;
+    description "Port range used for NodePort services";
+    default "30000-32767";
+    polycube-base:cli-example "30000-32767";
+  }
+
+  
+}
