@@ -36,13 +36,13 @@ set -e
 
 echo "installing polycubectl ..."
 
-pwdir=$(pwd)
-mkdir -p $GOPATH/src/github.com/polycube-network/polycube/src/
+#pwdir=$(pwd)
+#mkdir -p $GOPATH/src/github.com/polycube-network/polycube/src/
 
 # create soft link inside go directory
-ln -f -s $pwdir $GOPATH/src/github.com/polycube-network/polycube/src/ > /dev/null 2>&1
+#ln -f -s $pwdir $GOPATH/src/github.com/polycube-network/polycube/src/ > /dev/null 2>&1
 
-cd $GOPATH/src/github.com/polycube-network/polycube/src/polycubectl
+#cd $GOPATH/src/github.com/polycube-network/polycube/src/polycubectl
 # get all go dependencies
 go get ./...
 
