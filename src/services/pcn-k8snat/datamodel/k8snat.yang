@@ -11,6 +11,11 @@ module k8snat {
     organization "Polycube open source project";
     description "YANG data model for the Polycube k8sNAT service";
 
+    polycube-base:service-description "Kubernetes nat and nodeport filter Service";
+        polycube-base:service-version "1.0";
+        polycube-base:service-name "nat";
+        polycube-base:service-min-kernel-version "4.14.0";
+
     uses "polycube-standard-base:standard-base-yang-module" {
     augment ports {
       leaf type {

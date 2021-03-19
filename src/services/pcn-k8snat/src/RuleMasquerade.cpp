@@ -16,6 +16,7 @@ using namespace polycube::service;
 
 RuleMasquerade::RuleMasquerade(Rule &parent, const RuleMasqueradeJsonObject &conf)
     : parent_(parent),RuleMasqueradeBase(parent) {
+  logger()->debug("constructor masquerade 2 params");
   if (conf.enabledIsSet()) {
     setEnabled(conf.getEnabled());
   }
@@ -23,6 +24,7 @@ RuleMasquerade::RuleMasquerade(Rule &parent, const RuleMasqueradeJsonObject &con
 }
 
 RuleMasquerade::RuleMasquerade(Rule &parent) : parent_(parent), RuleMasqueradeBase(parent){
+  logger()->debug("constructor masquerade 1 params");
   enabled = false;
 }
 

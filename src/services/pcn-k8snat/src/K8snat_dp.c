@@ -14,9 +14,123 @@
  * the __sk_buff struct
  * Please look at the libpolycube documentation for more details.
  */
+#define NATTYPE_INGRESS 1
+#define NATTYPE_EGRESS 2
+#include <uapi/linux/bpf.h>
+#include <uapi/linux/filter.h>
+#include <uapi/linux/icmp.h>
+#include <uapi/linux/if_arp.h>
+#include <uapi/linux/if_ether.h>
+#include <uapi/linux/if_packet.h>
+#include <uapi/linux/in.h>
+#include <uapi/linux/ip.h>
+#include <uapi/linux/pkt_cls.h>
+#include <uapi/linux/tcp.h>
+#include <uapi/linux/udp.h>
+#define NAT_MAP_DIM 32768
+#define IP_CSUM_OFFSET (sizeof(struct eth_hdr) + offsetof(struct iphdr, check))
+#define UDP_CSUM_OFFSET                            \
+  (sizeof(struct eth_hdr) + sizeof(struct iphdr) + \
+   offsetof(struct udphdr, check))
+#define TCP_CSUM_OFFSET                            \
+  (sizeof(struct eth_hdr) + sizeof(struct iphdr) + \
+   offsetof(struct tcphdr, check))
+#define ICMP_CSUM_OFFSET                           \
+  (sizeof(struct eth_hdr) + sizeof(struct iphdr) + \
+   offsetof(struct icmphdr, checksum))
+#define IS_PSEUDO 0x10
+
+/* __attribute__((packed))
+ * forces alignment for this structure;
+ * otherwise misaligned read/write could happen
+ * between userspace and kernel space.
+ * same attribute should be used in kernel/user space
+ * structs declaration.
+ */
+
+struct eth_hdr {
+  __be64 dst : 48;
+  __be64 src : 48;
+  __be16 proto;
+} __attribute__((packed));
+// Session table
+struct st_k {
+  uint32_t src_ip;
+  uint32_t dst_ip;
+  uint16_t src_port;
+  uint16_t dst_port;
+  uint8_t proto;
+} __attribute__((packed));
+struct st_v {
+  uint32_t new_ip;
+  uint16_t new_port;
+  uint8_t originating_rule_type;
+} __attribute__((packed));
+//Nat ingress
+#define NATTYPE NATTYPE_INGRESS
+// session table also used by egrees programs
+BPF_TABLE_SHARED("lru_hash", struct st_k, struct st_v, egress_session_table,
+NAT_MAP_DIM);
+BPF_TABLE_SHARED("lru_hash", struct st_k, struct st_v, ingress_session_table,
+NAT_MAP_DIM);
+// only needed in ingress
+// DNAT + PORTFORWARDING rules
+struct dp_k {
+  u32 mask;
+  __be32 external_ip;
+  __be16 external_port;
+  uint8_t proto;
+};
+struct dp_v {
+  __be32 internal_ip;
+  __be16 internal_port;
+  uint8_t entry_type;
+};
+BPF_F_TABLE("lpm_trie", struct dp_k, struct dp_v, dp_rules, 1024,
+BPF_F_NO_PREALLOC);
+
+//nat egress
+#define NATTYPE NATTYPE_EGRESS
+// defined in ingress program
+BPF_TABLE("extern", struct st_k, struct st_v, egress_session_table,
+NAT_MAP_DIM);
+BPF_TABLE("extern", struct st_k, struct st_v, ingress_session_table,
+NAT_MAP_DIM);
+// only needed in egress
+// SNAT + MASQUERADE rules
+struct sm_k {
+  u32 internal_netmask_len;
+  __be32 internal_ip;
+};
+struct sm_v {
+  __be32 external_ip;
+  uint8_t entry_type;
+};
+BPF_F_TABLE("lpm_trie", struct sm_k, struct sm_v, sm_rules, 1024,
+BPF_F_NO_PREALLOC);
+// Port numbers
+BPF_TABLE("array", u32, u16, first_free_port, 1);
+static inline __be16 get_free_port() {
+  u32 i = 0;
+  u16 *new_port_p = first_free_port.lookup(&i);
+  if (!new_port_p)
+    return 0;
+  rcu_read_lock();
+  if (*new_port_p < 1024 || *new_port_p == 65535)
+    *new_port_p = 1024;
+  *new_port_p = *new_port_p + 1;
+  rcu_read_unlock();
+  return bpf_htons(*new_port_p);
+}
+
 static __always_inline
 int handle_rx(struct CTXTYPE *ctx, struct pkt_metadata *md) {
-  // Put your eBPF datapath code here
+  // NAT processing happens in 4 steps:
+  // 1) packet parsing
+  // 2) session table lookup
+  // 3) rule lookup
+  // 4) packet modification
+
   pcn_log(ctx, LOG_INFO, "Hello from polycube! :-)");
   return RX_DROP;
 }

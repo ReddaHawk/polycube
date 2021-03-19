@@ -21,6 +21,8 @@ Rule::Rule(K8snat &parent, const RuleJsonObject &conf)
   addDnat(conf.getDnat());
   addPortForwarding(conf.getPortForwarding());
    */
+  logger()->debug("constructor rule");
+
   //todo add snat dnat portforwarding
   //snat_ = std::make_shared<RuleSnat>(*this);
   //dnat_ = std::make_shared<RuleDnat>(*this);
@@ -35,6 +37,7 @@ void Rule::update(const RuleJsonObject &conf) {
   // This method updates all the object/parameter in Rule object specified in
   // the conf JsonObject.
   // You can modify this implementation.
+  logger()->debug("update rule");
   if (conf.snatIsSet()) {
     auto m = getSnat();
     m->update(conf.getSnat());
@@ -89,6 +92,8 @@ std::shared_ptr<RuleMasquerade> Rule::getMasquerade() {
 }
 
 void Rule::addMasquerade(const RuleMasqueradeJsonObject &value) {
+  logger()->debug("addMasquerade");
+  logger()->debug("{0}",value.getEnabled());
   masquerade_ = std::make_shared<RuleMasquerade>(*this, value);
 }
 
