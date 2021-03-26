@@ -27,6 +27,9 @@ K8sdispatcher::K8sdispatcher(const std::string name, const K8sdispatcherJsonObje
 
   addPortsList(conf.getPorts());
 
+  //subscribe_parent_parameter("ip", cb);
+  //subscribe
+
   /*
   addPortsList(conf.getPorts());
     setClusterIpSubnet(conf.getClusterIpSubnet());
@@ -53,6 +56,7 @@ K8sdispatcherJsonObject K8sdispatcher::toJsonObject() {
   conf.setClientSubnet(getClientSubnet());
   conf.setVirtualClientSubnet(getVirtualClientSubnet());
   conf.setNodeportRange(getNodeportRange());
+
   //  Remove comments when you implement all sub-methods
   // for(auto &i : getFwdTableList()){
   //  conf.addFwdTable(i->toJsonObject());
@@ -76,7 +80,6 @@ void K8sdispatcher::reloadConfig() {
       break;
     }
   }
-
   flags += "#define FRONTEND_PORT " + std::to_string(frontend) + "\n";
   flags += "#define BACKEND_PORT " + std::to_string(backend) + "\n";
   flags += "#define NODEPORT_RANGE_LOW " + std::to_string(nodeport_range_low_) +
@@ -93,6 +96,11 @@ void K8sdispatcher::reloadConfig() {
       "#define CLIENT_SUBNET " + std::to_string(htonl(client_subnet_)) + "\n";
   flags += "#define VIRTUAL_CLIENT_SUBNET " +
            std::to_string(htonl(virtual_client_subnet_)) + "\n";
+  flags += "#define EXTERNAL_IP " +
+           std::to_string(htonl(external_ip_))+ "\n";
+  flags += "#define EXTERNAL_MAC " +
+           std::to_string(external_mac_)+ "\n";
+
   logger()->debug("flags is {}", flags);
   logger()->debug("Reloading code with flags port: {}", flags);
 
@@ -135,8 +143,24 @@ void K8sdispatcher::update(const K8sdispatcherJsonObject &conf) {
 
 K8sdispatcher::~K8sdispatcher() {
   logger()->info("Destroying K8sdispatcher instance");
+  logger()->info("Flags was {}",getFlags());
 }
 
+void K8sdispatcher::doSetExternalIp(const std::string &value){
+  uint32_t external_ip_subnet;
+  external_ip_string_ = value;
+  parse_cidr(value, &external_ip_, &external_ip_subnet);
+  reloadConfig();
+}
+
+void K8sdispatcher::doSetExternalMac(const std::string &value){
+  //todo inject mac to datapath
+  logger()->info("doSetExternalMac %s",value );
+  external_mac_string_=value;
+  external_mac_ = mac_string_to_nbo_uint(value);
+  logger()->info("{0}",external_mac_);
+  reloadConfig();
+}
 void K8sdispatcher::doSetClusterIpSubnet(const std::string &value) {
   parse_cidr(value, &cluster_ip_subnet_, &cluster_ip_mask_);
   cluster_ip_cidr_ = value;
@@ -199,9 +223,10 @@ std::string K8sdispatcher::getFlags() {
   std::string flags;
 
   // ports
-  uint16_t frontend = 0;
-  uint16_t backend = 0;
+  uint16_t frontend = -1;
+  uint16_t backend = -1;
   for (auto &it : get_ports()) {
+    logger()->info("Dentro for");
     switch (it->getType()) {
     case PortsTypeEnum::FRONTEND:
       frontend = it->index();
@@ -228,6 +253,10 @@ std::string K8sdispatcher::getFlags() {
       "#define CLIENT_SUBNET " + std::to_string(htonl(client_subnet_)) + "\n";
   flags += "#define VIRTUAL_CLIENT_SUBNET " +
            std::to_string(htonl(virtual_client_subnet_)) + "\n";
+  flags += "#define EXTERNAL_IP " +
+      std::to_string(htonl(external_ip_))+ "\n";
+  flags += "#define EXTERNAL_MAC " +
+           std::to_string(htonl(external_mac_))+ "\n";
 
   return flags;
 }
@@ -246,7 +275,40 @@ std::vector<std::shared_ptr<Ports>> K8sdispatcher::getPortsList() {
 
 // Basic default implementation, place your extension here (if needed)
 void K8sdispatcher::addPorts(const std::string &name, const PortsJsonObject &conf) {
-  K8sdispatcherBase::addPorts(name, conf);
+  logger()->info("add ports");
+  if (get_ports().size() == 2) {
+    logger()->warn("Reached maximum number of ports");
+    throw std::runtime_error("Reached maximum number of ports");
+  }
+
+  try {
+    switch (conf.getType()) {
+    case PortsTypeEnum::FRONTEND:
+      if (getFrontendPort() != nullptr) {
+        logger()->warn("There is already a FRONTEND port");
+        throw std::runtime_error("There is already a FRONTEND port");
+      }
+      break;
+    case PortsTypeEnum::BACKEND:
+      if (getBackendPort() != nullptr) {
+        logger()->warn("There is already a BACKEND port");
+        throw std::runtime_error("There is already a BACKEND port");
+      }
+      break;
+
+    }
+  } catch (std::runtime_error &e) {
+    logger()->warn("Error when adding the port {0}", name);
+    logger()->warn("Error message: {0}", e.what());
+    throw;
+  }
+  add_port<PortsJsonObject>(name, conf);
+  if (get_ports().size() ==2) {
+    logger()->info("Reloading code because of the new port");
+    reloadConfig();
+  }
+
+  logger()->info("New port created with name {0}", name);
 }
 
 // Basic default implementation, place your extension here (if needed)
@@ -313,6 +375,18 @@ uint8_t K8sdispatcher::proto_from_string_to_int(const std::string &proto) {
     return IPPROTO_UDP;
   }
   return -1;
+}
+
+uint64_t K8sdispatcher::mac_string_to_nbo_uint(const std::string &mac) {
+  uint8_t a[6];
+  int last = -1;
+  int rc = sscanf(mac.c_str(), "%hhx:%hhx:%hhx:%hhx:%hhx:%hhx%n", a + 0, a + 1,
+                  a + 2, a + 3, a + 4, a + 5, &last);
+  if (rc != 6 || mac.size() != last) {
+    throw std::runtime_error("invalid mac address format " + mac);
+  }
+  return uint64_t(a[5]) << 40 | uint64_t(a[4]) << 32 | uint64_t(a[3]) << 24 |
+         uint64_t(a[2]) << 16 | uint64_t(a[1]) << 8 | uint64_t(a[0]);
 }
 
 std::shared_ptr<NattingTable> K8sdispatcher::getNattingTable(const std::string &internalSrc, const std::string &internalDst, const uint16_t &internalSport, const uint16_t &internalDport, const std::string &proto) {
@@ -414,3 +488,22 @@ std::string K8sdispatcher::proto_from_int_to_string(const uint8_t proto) {
     return "unknown";
   }
 }
+
+std::shared_ptr<Ports> K8sdispatcher::getFrontendPort() {
+  for (auto &it : get_ports()) {
+    if (it->getType() == PortsTypeEnum::FRONTEND) {
+      return it;
+    }
+  }
+  return nullptr;
+}
+
+std::shared_ptr<Ports> K8sdispatcher::getBackendPort() {
+  for (auto &it : get_ports()) {
+    if (it->getType() == PortsTypeEnum::BACKEND) {
+      return it;
+    }
+  }
+  return nullptr;
+}
+

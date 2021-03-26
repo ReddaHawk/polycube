@@ -17,7 +17,7 @@
 
 using namespace polycube::service::model;
 
-
+using namespace polycube::service;
 /* definitions copied from datapath */
 struct dp_k {
   uint32_t mask;
@@ -41,8 +41,6 @@ struct sm_v {
   uint32_t external_ip;
   uint8_t entry_type;
 } __attribute__((packed));
-
-using namespace polycube::service::model;
 
 class K8sdispatcher : public K8sdispatcherBase {
  public:
@@ -104,6 +102,8 @@ class K8sdispatcher : public K8sdispatcherBase {
   void doSetClientSubnet(const std::string &value);
   void doSetVirtualClientSubnet(const std::string &value);
   void doSetNodeportRange(const std::string &value);
+  void doSetExternalIp(const std::string &value);
+  void doSetExternalMac(const std::string &value);
   uint8_t proto_from_string_to_int(const std::string &proto);
   std::string proto_from_int_to_string(const uint8_t proto);
 
@@ -129,6 +129,13 @@ class K8sdispatcher : public K8sdispatcherBase {
   uint32_t ip_to_dec(const std::string &ip);
   void parse_cidr(const std::string &cidr, uint32_t *subnet, uint32_t *netmask);
   void reloadConfig();
-
+  std::string external_ip_string_;
+  uint32_t external_ip_;
+  std::string external_mac_string_;
+  uint64_t external_mac_ : 48;
   std::string getFlags();
+  std::shared_ptr<Ports> getFrontendPort();
+  std::shared_ptr<Ports> getBackendPort();
+
+  uint64_t mac_string_to_nbo_uint(const std::string &mac);
 };

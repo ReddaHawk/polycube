@@ -32,5 +32,7 @@ class Ports : public PortsBase {
   PortsJsonObject toJsonObject();
 
  private:
+  std::string mac_;
+  std::string ip_;
   PortsTypeEnum port_type_;
 };
