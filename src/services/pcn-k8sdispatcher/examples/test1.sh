@@ -45,7 +45,7 @@ polycubectl router add r1 loglevel=TRACE
 # Create router port to bridge
 polycubectl r1 ports add to_br1ns ip=10.10.7.254/24
 # Create router port to physical interface
-polycubectl r1 ports add to_internet mac=a0:8c:fd:ce:cb:01 ip=192.168.0.100/23
+polycubectl r1 ports add to_internet mac=a0:8c:fd:ce:cb:01 ip=192.168.0.92/23
 # Connect bridge and router (ATTENTION: you have to change 'enp1s0' with
 # the right physical interface name)
 polycubectl connect r1:to_br1ns br1ns:to_router
@@ -55,7 +55,7 @@ polycubectl connect r1:to_br1ns br1ns:to_router
 # (You can look for the default gateway by using 'ip route' and searching
 # for the 'default' route)
 # Create NAT
-polycubectl k8sdispatcher k1 cluster-ip-subnet=10.0.0.0/24 client-subnet=10.0.1.0/24 virtual-client-subnet=1.1.1.0/16
+polycubectl k8sdispatcher k1 cluster-ip-subnet=10.0.0.0/24 client-subnet=10.0.1.0/24 virtual-client-subnet=1.1.1.0/16 #loglevel=TRACE
 polycubectl k1 ports add to_int type=FRONTEND
 polycubectl k1 ports add to_router type=BACKEND
 # (EXTRA) To connect PC to Internet too, as of December 2019:

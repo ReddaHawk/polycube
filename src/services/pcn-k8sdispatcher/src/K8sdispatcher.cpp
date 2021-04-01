@@ -155,10 +155,8 @@ void K8sdispatcher::doSetExternalIp(const std::string &value){
 
 void K8sdispatcher::doSetExternalMac(const std::string &value){
   //todo inject mac to datapath
-  logger()->info("doSetExternalMac %s",value );
   external_mac_string_=value;
   external_mac_ = mac_string_to_nbo_uint(value);
-  logger()->info("{0}",external_mac_);
   reloadConfig();
 }
 void K8sdispatcher::doSetClusterIpSubnet(const std::string &value) {
@@ -221,7 +219,6 @@ void K8sdispatcher::packet_in(Ports &port,
 
 std::string K8sdispatcher::getFlags() {
   std::string flags;
-
   // ports
   uint16_t frontend = -1;
   uint16_t backend = -1;
@@ -444,6 +441,9 @@ void K8sdispatcher::addNattingTable(const std::string &internalSrc, const std::s
 // Basic default implementation, place your extension here (if needed)
 void K8sdispatcher::addNattingTableList(const std::vector<NattingTableJsonObject> &conf) {
   // call default implementation in base class
+  for(auto &row : conf){
+    row.
+  }
   throw std::runtime_error("Cannot manually create natting table entries");
 }
 
