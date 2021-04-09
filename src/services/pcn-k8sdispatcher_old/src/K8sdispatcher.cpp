@@ -16,32 +16,28 @@ K8sdispatcher::K8sdispatcher(const std::string name, const K8sdispatcherJsonObje
   : Cube(conf.getBase(), {}, {}),
     K8sdispatcherBase(name) {
   logger()->info("Creating K8sdispatcher instance");
+
   // call do... functions to avoid reloading code so many times
   doSetClusterIpSubnet(conf.getClusterIpSubnet());
   doSetClientSubnet(conf.getClientSubnet());
   doSetVirtualClientSubnet(conf.getVirtualClientSubnet());
   doSetNodeportRange(conf.getNodeportRange());
-  if (conf.clusterIpSubnetIsSet()) {
-    doSetClusterIpSubnet(conf.getClusterIpSubnet());
-  }
-
-  if (conf.clientSubnetIsSet()) {
-    doSetClientSubnet(conf.getClientSubnet());
-  }
-
-  if (conf.virtualClientSubnetIsSet()) {
-    doSetVirtualClientSubnet(conf.getVirtualClientSubnet());
-  }
-
-  addNattingRuleList(conf.getNattingRule());
-  addNodeportRuleList(conf.getNodeportRule());
-  setNodeportRange(conf.getNodeportRange());
 
   add_program(getFlags() + k8sdispatcher_code, 0);
 
   addPortsList(conf.getPorts());
 
+  //subscribe_parent_parameter("ip", cb);
+  //subscribe
 
+  /*
+  addPortsList(conf.getPorts());
+    setClusterIpSubnet(conf.getClusterIpSubnet());
+    setClientSubnet(conf.getClientSubnet());
+    setVirtualClientSubnet(conf.getVirtualClientSubnet());
+  addNattingTableList(conf.getNattingTable());
+    setNodeportRange(conf.getNodeportRange());
+    */
 }
 
 K8sdispatcherJsonObject K8sdispatcher::toJsonObject() {
@@ -147,6 +143,7 @@ void K8sdispatcher::update(const K8sdispatcherJsonObject &conf) {
 
 K8sdispatcher::~K8sdispatcher() {
   logger()->info("Destroying K8sdispatcher instance");
+  logger()->info("Flags was {}",getFlags());
 }
 
 void K8sdispatcher::doSetExternalIp(const std::string &value){
@@ -197,7 +194,7 @@ void K8sdispatcher::doSetNodeportRange(const std::string &value) {
 }
 
 void K8sdispatcher::parse_cidr(const std::string &cidr, uint32_t *subnet,
-                               uint32_t *netmask) {
+                          uint32_t *netmask) {
   std::string net_str = cidr.substr(0, cidr.find("/"));
   std::string mask_len = cidr.substr(cidr.find("/") + 1, std::string::npos);
 
@@ -217,7 +214,7 @@ uint32_t K8sdispatcher::ip_to_dec(const std::string &ip) {
 void K8sdispatcher::packet_in(Ports &port,
     polycube::service::PacketInMetadata &md,
     const std::vector<uint8_t> &packet) {
-  logger()->debug("Packet received from port {0}", port.name());
+  logger()->info("Packet received from port {0}", port.name());
 }
 
 std::string K8sdispatcher::getFlags() {
@@ -254,13 +251,12 @@ std::string K8sdispatcher::getFlags() {
   flags += "#define VIRTUAL_CLIENT_SUBNET " +
            std::to_string(htonl(virtual_client_subnet_)) + "\n";
   flags += "#define EXTERNAL_IP " +
-           std::to_string(htonl(external_ip_))+ "\n";
+      std::to_string(htonl(external_ip_))+ "\n";
   flags += "#define EXTERNAL_MAC " +
            std::to_string(htonl(external_mac_))+ "\n";
 
   return flags;
 }
-
 
 // Basic default implementation, place your extension here (if needed)
 std::shared_ptr<Ports> K8sdispatcher::getPorts(const std::string &name) {
@@ -391,7 +387,7 @@ uint64_t K8sdispatcher::mac_string_to_nbo_uint(const std::string &mac) {
          uint64_t(a[2]) << 16 | uint64_t(a[1]) << 8 | uint64_t(a[0]);
 }
 
-std::shared_ptr<NattingRule> K8sdispatcher::getNattingRule(const std::string &internalSrc, const std::string &internalDst, const uint16_t &internalSport, const uint16_t &internalDport, const std::string &proto) {
+std::shared_ptr<NattingTable> K8sdispatcher::getNattingTable(const std::string &internalSrc, const std::string &internalDst, const uint16_t &internalSport, const uint16_t &internalDport, const std::string &proto) {
   try {
     auto table = get_hash_table<st_k, st_v>("egress_session_table");
     st_k map_key{
@@ -414,12 +410,11 @@ std::shared_ptr<NattingRule> K8sdispatcher::getNattingRule(const std::string &in
     return entry;
   } catch (std::exception &e) {
     throw std::runtime_error("Natting table entry not found");
-  }
-}
+  }}
 
-std::vector<std::shared_ptr<NattingRule>> K8sdispatcher::getNattingRuleList() {
+std::vector<std::shared_ptr<NattingTable>> K8sdispatcher::getNattingTableList() {
   logger()->debug("getNattingTable");
-  std::vector<std::shared_ptr<NattingRule>> entries;
+  std::vector<std::shared_ptr<NattingTable>> entries;
   try {
     auto table = get_hash_table<st_k, st_v>("egress_session_table");
     auto map_entries = table.get_all();
@@ -438,31 +433,49 @@ std::vector<std::shared_ptr<NattingRule>> K8sdispatcher::getNattingRuleList() {
   } catch (std::exception &e) {
     throw std::runtime_error("Unable to get the natting table");
   }
-  return entries;
-}
+  return entries;}
 
-void K8sdispatcher::addNattingRule(const std::string &internalSrc, const std::string &internalDst, const uint16_t &internalSport, const uint16_t &internalDport, const std::string &proto, const NattingRuleJsonObject &conf) {
-  throw std::runtime_error("K8sdispatcher::addNattingRule: Method not implemented");
+void K8sdispatcher::addNattingTable(const std::string &internalSrc, const std::string &internalDst, const uint16_t &internalSport, const uint16_t &internalDport, const std::string &proto, const NattingTableJsonObject &conf) {
+  //throw std::runtime_error("Cannot manually create natting table entries");
+  // add nodeport rule
+  logger()->info("addNattingTable");
+  auto dp_rules =get_hash_table<dp_k, dp_v>(
+      "dp_rules", 0, ProgramType::INGRESS);
+  //logger()->info("%I",
+  dp_k key{
+      .mask = 56, .external_ip = htonl(external_ip_), .external_port = htons(internalDport), .proto = proto_from_string_to_int(proto),
+  };
+  dp_v value{
+      .internal_ip = htonl(ip_to_dec(internalSrc)),
+      .internal_port = htons(internalDport),
+      .entry_type = 1,
+  };
+
+  dp_rules.set(key, value);
 }
 
 // Basic default implementation, place your extension here (if needed)
-void K8sdispatcher::addNattingRuleList(const std::vector<NattingRuleJsonObject> &conf) {
+void K8sdispatcher::addNattingTableList(const std::vector<NattingTableJsonObject> &conf) {
   // call default implementation in base class
-  K8sdispatcherBase::addNattingRuleList(conf);
+  for(auto &row : conf){
+    addNattingTable(row.getInternalSrc(),row.getInternalDst(),row.getInternalSport(),row.getInternalDport(),row.getProto(),row);
+  }
+
+  //throw std::runtime_error("Cannot manually create natting table entries");
 }
 
 // Basic default implementation, place your extension here (if needed)
-void K8sdispatcher::replaceNattingRule(const std::string &internalSrc, const std::string &internalDst, const uint16_t &internalSport, const uint16_t &internalDport, const std::string &proto, const NattingRuleJsonObject &conf) {
+void K8sdispatcher::replaceNattingTable(const std::string &internalSrc, const std::string &internalDst, const uint16_t &internalSport, const uint16_t &internalDport, const std::string &proto, const NattingTableJsonObject &conf) {
   // call default implementation in base class
-  K8sdispatcherBase::replaceNattingRule(internalSrc, internalDst, internalSport, internalDport, proto, conf);
+  throw std::runtime_error("Cannot manually create natting table entries");
 }
 
-void K8sdispatcher::delNattingRule(const std::string &internalSrc, const std::string &internalDst, const uint16_t &internalSport, const uint16_t &internalDport, const std::string &proto) {
-  throw std::runtime_error("K8sdispatcher::delNattingRule: Method not implemented");
+void K8sdispatcher::delNattingTable(const std::string &internalSrc, const std::string &internalDst, const uint16_t &internalSport, const uint16_t &internalDport, const std::string &proto) {
+  throw std::runtime_error("Cannot manually remove single natting table entries");
 }
 
 // Basic default implementation, place your extension here (if needed)
-void K8sdispatcher::delNattingRuleList() {
+void K8sdispatcher::delNattingTableList() {
   auto egress_table = get_hash_table<st_k, st_v>("egress_session_table");
   egress_table.remove_all();
   auto ingress_table = get_hash_table<st_k, st_v>("ingress_session_table");
@@ -470,46 +483,14 @@ void K8sdispatcher::delNattingRuleList() {
 
   logger()->info("Flushed natting tables");
 }
-std::shared_ptr<NodeportRule> K8sdispatcher::getNodeportRule(const uint16_t &nodeportPort, const std::string &proto) {
-  throw std::runtime_error("K8sdispatcher::getEntry: Method not implemented");
-}
-
-std::vector<std::shared_ptr<NodeportRule>> K8sdispatcher::getNodeportRuleList() {
-  throw std::runtime_error("K8sdispatcher::getNodeportRuleList: Method not implemented");
-}
-
-void K8sdispatcher::addNodeportRule(const uint16_t &nodeportPort, const std::string &proto, const NodeportRuleJsonObject &conf) {
-  throw std::runtime_error("K8sdispatcher::addNodeportRule: Method not implemented");
-}
-
-// Basic default implementation, place your extension here (if needed)
-void K8sdispatcher::addNodeportRuleList(const std::vector<NodeportRuleJsonObject> &conf) {
-  // call default implementation in base class
-  K8sdispatcherBase::addNodeportRuleList(conf);
-}
-
-// Basic default implementation, place your extension here (if needed)
-void K8sdispatcher::replaceNodeportRule(const uint16_t &nodeportPort, const std::string &proto, const NodeportRuleJsonObject &conf) {
-  // call default implementation in base class
-  K8sdispatcherBase::replaceNodeportRule(nodeportPort, proto, conf);
-}
-
-void K8sdispatcher::delNodeportRule(const uint16_t &nodeportPort, const std::string &proto) {
-  throw std::runtime_error("K8sdispatcher::delNodeportRule: Method not implemented");
-}
-
-// Basic default implementation, place your extension here (if needed)
-void K8sdispatcher::delNodeportRuleList() {
-  throw std::runtime_error("K8sdispatcher::delNodeportRuleList: Method not implemented");
-}
 
 std::string K8sdispatcher::getNodeportRange() {
   return nodeport_range_;
 }
 
 void K8sdispatcher::setNodeportRange(const std::string &value) {
-  doSetNodeportRange(value);
-  reloadConfig();
+    doSetNodeportRange(value);
+    reloadConfig();
 }
 std::string K8sdispatcher::proto_from_int_to_string(const uint8_t proto) {
   switch (proto) {
@@ -542,5 +523,4 @@ std::shared_ptr<Ports> K8sdispatcher::getBackendPort() {
   }
   return nullptr;
 }
-
 

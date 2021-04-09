@@ -19,8 +19,8 @@ using namespace polycube::service::model;
 class Ports : public PortsBase {
  public:
   Ports(polycube::service::Cube<Ports> &parent,
-        std::shared_ptr<polycube::service::PortIface> port,
-        const PortsJsonObject &conf);
+      std::shared_ptr<polycube::service::PortIface> port,
+      const PortsJsonObject &conf);
   virtual ~Ports();
 
   /// <summary>

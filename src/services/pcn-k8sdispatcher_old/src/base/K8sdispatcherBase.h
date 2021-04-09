@@ -18,8 +18,7 @@
 
 #include "../serializer/K8sdispatcherJsonObject.h"
 
-#include "../NattingRule.h"
-#include "../NodeportRule.h"
+#include "../NattingTable.h"
 #include "../Ports.h"
 
 #include "polycube/services/cube.h"
@@ -75,24 +74,13 @@ class K8sdispatcherBase: public virtual polycube::service::Cube<Ports> {
   /// <summary>
   ///
   /// </summary>
-  virtual std::shared_ptr<NattingRule> getNattingRule(const std::string &internalSrc, const std::string &internalDst, const uint16_t &internalSport, const uint16_t &internalDport, const std::string &proto) = 0;
-  virtual std::vector<std::shared_ptr<NattingRule>> getNattingRuleList() = 0;
-  virtual void addNattingRule(const std::string &internalSrc, const std::string &internalDst, const uint16_t &internalSport, const uint16_t &internalDport, const std::string &proto, const NattingRuleJsonObject &conf) = 0;
-  virtual void addNattingRuleList(const std::vector<NattingRuleJsonObject> &conf);
-  virtual void replaceNattingRule(const std::string &internalSrc, const std::string &internalDst, const uint16_t &internalSport, const uint16_t &internalDport, const std::string &proto, const NattingRuleJsonObject &conf);
-  virtual void delNattingRule(const std::string &internalSrc,const std::string &internalDst,const uint16_t &internalSport,const uint16_t &internalDport,const std::string &proto) = 0;
-  virtual void delNattingRuleList();
-
-  /// <summary>
-  ///
-  /// </summary>
-  virtual std::shared_ptr<NodeportRule> getNodeportRule(const uint16_t &nodeportPort, const std::string &proto) = 0;
-  virtual std::vector<std::shared_ptr<NodeportRule>> getNodeportRuleList() = 0;
-  virtual void addNodeportRule(const uint16_t &nodeportPort, const std::string &proto, const NodeportRuleJsonObject &conf) = 0;
-  virtual void addNodeportRuleList(const std::vector<NodeportRuleJsonObject> &conf);
-  virtual void replaceNodeportRule(const uint16_t &nodeportPort, const std::string &proto, const NodeportRuleJsonObject &conf);
-  virtual void delNodeportRule(const uint16_t &nodeportPort,const std::string &proto) = 0;
-  virtual void delNodeportRuleList();
+  virtual std::shared_ptr<NattingTable> getNattingTable(const std::string &internalSrc, const std::string &internalDst, const uint16_t &internalSport, const uint16_t &internalDport, const std::string &proto) = 0;
+  virtual std::vector<std::shared_ptr<NattingTable>> getNattingTableList() = 0;
+  virtual void addNattingTable(const std::string &internalSrc, const std::string &internalDst, const uint16_t &internalSport, const uint16_t &internalDport, const std::string &proto, const NattingTableJsonObject &conf) = 0;
+  virtual void addNattingTableList(const std::vector<NattingTableJsonObject> &conf);
+  virtual void replaceNattingTable(const std::string &internalSrc, const std::string &internalDst, const uint16_t &internalSport, const uint16_t &internalDport, const std::string &proto, const NattingTableJsonObject &conf);
+  virtual void delNattingTable(const std::string &internalSrc,const std::string &internalDst,const uint16_t &internalSport,const uint16_t &internalDport,const std::string &proto) = 0;
+  virtual void delNattingTableList();
 
   /// <summary>
   /// Port range used for NodePort services

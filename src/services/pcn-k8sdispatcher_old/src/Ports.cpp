@@ -14,8 +14,8 @@
 
 
 Ports::Ports(polycube::service::Cube<Ports> &parent,
-             std::shared_ptr<polycube::service::PortIface> port,
-             const PortsJsonObject &conf)
+    std::shared_ptr<polycube::service::PortIface> port,
+    const PortsJsonObject &conf)
     : PortsBase(parent, port) {
   logger()->info("Port constructor");
   port_type_ = conf.getType();

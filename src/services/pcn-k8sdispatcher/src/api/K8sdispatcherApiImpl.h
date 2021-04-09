@@ -23,7 +23,8 @@
 #include "../K8sdispatcher.h"
 
 #include "K8sdispatcherJsonObject.h"
-#include "NattingTableJsonObject.h"
+#include "NattingRuleJsonObject.h"
+#include "NodeportRuleJsonObject.h"
 #include "PortsJsonObject.h"
 #include <vector>
 
@@ -35,42 +36,54 @@ using namespace polycube::service::model;
 
 namespace K8sdispatcherApiImpl {
   void create_k8sdispatcher_by_id(const std::string &name, const K8sdispatcherJsonObject &value);
-  void create_k8sdispatcher_natting_table_by_id(const std::string &name, const std::string &internalSrc, const std::string &internalDst, const uint16_t &internalSport, const uint16_t &internalDport, const std::string &proto, const NattingTableJsonObject &value);
-  void create_k8sdispatcher_natting_table_list_by_id(const std::string &name, const std::vector<NattingTableJsonObject> &value);
+  void create_k8sdispatcher_natting_rule_by_id(const std::string &name, const std::string &internalSrc, const std::string &internalDst, const uint16_t &internalSport, const uint16_t &internalDport, const std::string &proto, const NattingRuleJsonObject &value);
+  void create_k8sdispatcher_natting_rule_list_by_id(const std::string &name, const std::vector<NattingRuleJsonObject> &value);
+  void create_k8sdispatcher_nodeport_rule_by_id(const std::string &name, const uint16_t &nodeportPort, const std::string &proto, const NodeportRuleJsonObject &value);
+  void create_k8sdispatcher_nodeport_rule_list_by_id(const std::string &name, const std::vector<NodeportRuleJsonObject> &value);
   void create_k8sdispatcher_ports_by_id(const std::string &name, const std::string &portsName, const PortsJsonObject &value);
   void create_k8sdispatcher_ports_list_by_id(const std::string &name, const std::vector<PortsJsonObject> &value);
   void delete_k8sdispatcher_by_id(const std::string &name);
-  void delete_k8sdispatcher_natting_table_by_id(const std::string &name, const std::string &internalSrc, const std::string &internalDst, const uint16_t &internalSport, const uint16_t &internalDport, const std::string &proto);
-  void delete_k8sdispatcher_natting_table_list_by_id(const std::string &name);
+  void delete_k8sdispatcher_natting_rule_by_id(const std::string &name, const std::string &internalSrc, const std::string &internalDst, const uint16_t &internalSport, const uint16_t &internalDport, const std::string &proto);
+  void delete_k8sdispatcher_natting_rule_list_by_id(const std::string &name);
+  void delete_k8sdispatcher_nodeport_rule_by_id(const std::string &name, const uint16_t &nodeportPort, const std::string &proto);
+  void delete_k8sdispatcher_nodeport_rule_list_by_id(const std::string &name);
   void delete_k8sdispatcher_ports_by_id(const std::string &name, const std::string &portsName);
   void delete_k8sdispatcher_ports_list_by_id(const std::string &name);
   K8sdispatcherJsonObject read_k8sdispatcher_by_id(const std::string &name);
   std::string read_k8sdispatcher_client_subnet_by_id(const std::string &name);
   std::string read_k8sdispatcher_cluster_ip_subnet_by_id(const std::string &name);
   std::vector<K8sdispatcherJsonObject> read_k8sdispatcher_list_by_id();
-  NattingTableJsonObject read_k8sdispatcher_natting_table_by_id(const std::string &name, const std::string &internalSrc, const std::string &internalDst, const uint16_t &internalSport, const uint16_t &internalDport, const std::string &proto);
-  std::string read_k8sdispatcher_natting_table_external_ip_by_id(const std::string &name, const std::string &internalSrc, const std::string &internalDst, const uint16_t &internalSport, const uint16_t &internalDport, const std::string &proto);
-  uint16_t read_k8sdispatcher_natting_table_external_port_by_id(const std::string &name, const std::string &internalSrc, const std::string &internalDst, const uint16_t &internalSport, const uint16_t &internalDport, const std::string &proto);
-  std::vector<NattingTableJsonObject> read_k8sdispatcher_natting_table_list_by_id(const std::string &name);
+  NattingRuleJsonObject read_k8sdispatcher_natting_rule_by_id(const std::string &name, const std::string &internalSrc, const std::string &internalDst, const uint16_t &internalSport, const uint16_t &internalDport, const std::string &proto);
+  std::string read_k8sdispatcher_natting_rule_external_ip_by_id(const std::string &name, const std::string &internalSrc, const std::string &internalDst, const uint16_t &internalSport, const uint16_t &internalDport, const std::string &proto);
+  uint16_t read_k8sdispatcher_natting_rule_external_port_by_id(const std::string &name, const std::string &internalSrc, const std::string &internalDst, const uint16_t &internalSport, const uint16_t &internalDport, const std::string &proto);
+  std::vector<NattingRuleJsonObject> read_k8sdispatcher_natting_rule_list_by_id(const std::string &name);
   std::string read_k8sdispatcher_nodeport_range_by_id(const std::string &name);
+  NodeportRuleJsonObject read_k8sdispatcher_nodeport_rule_by_id(const std::string &name, const uint16_t &nodeportPort, const std::string &proto);
+  std::string read_k8sdispatcher_nodeport_rule_internal_src_by_id(const std::string &name, const uint16_t &nodeportPort, const std::string &proto);
+  std::vector<NodeportRuleJsonObject> read_k8sdispatcher_nodeport_rule_list_by_id(const std::string &name);
   PortsJsonObject read_k8sdispatcher_ports_by_id(const std::string &name, const std::string &portsName);
   std::vector<PortsJsonObject> read_k8sdispatcher_ports_list_by_id(const std::string &name);
   PortsTypeEnum read_k8sdispatcher_ports_type_by_id(const std::string &name, const std::string &portsName);
   std::string read_k8sdispatcher_virtual_client_subnet_by_id(const std::string &name);
   void replace_k8sdispatcher_by_id(const std::string &name, const K8sdispatcherJsonObject &value);
-  void replace_k8sdispatcher_natting_table_by_id(const std::string &name, const std::string &internalSrc, const std::string &internalDst, const uint16_t &internalSport, const uint16_t &internalDport, const std::string &proto, const NattingTableJsonObject &value);
-  void replace_k8sdispatcher_natting_table_list_by_id(const std::string &name, const std::vector<NattingTableJsonObject> &value);
+  void replace_k8sdispatcher_natting_rule_by_id(const std::string &name, const std::string &internalSrc, const std::string &internalDst, const uint16_t &internalSport, const uint16_t &internalDport, const std::string &proto, const NattingRuleJsonObject &value);
+  void replace_k8sdispatcher_natting_rule_list_by_id(const std::string &name, const std::vector<NattingRuleJsonObject> &value);
+  void replace_k8sdispatcher_nodeport_rule_by_id(const std::string &name, const uint16_t &nodeportPort, const std::string &proto, const NodeportRuleJsonObject &value);
+  void replace_k8sdispatcher_nodeport_rule_list_by_id(const std::string &name, const std::vector<NodeportRuleJsonObject> &value);
   void replace_k8sdispatcher_ports_by_id(const std::string &name, const std::string &portsName, const PortsJsonObject &value);
   void replace_k8sdispatcher_ports_list_by_id(const std::string &name, const std::vector<PortsJsonObject> &value);
   void update_k8sdispatcher_by_id(const std::string &name, const K8sdispatcherJsonObject &value);
   void update_k8sdispatcher_client_subnet_by_id(const std::string &name, const std::string &value);
   void update_k8sdispatcher_cluster_ip_subnet_by_id(const std::string &name, const std::string &value);
   void update_k8sdispatcher_list_by_id(const std::vector<K8sdispatcherJsonObject> &value);
-  void update_k8sdispatcher_natting_table_by_id(const std::string &name, const std::string &internalSrc, const std::string &internalDst, const uint16_t &internalSport, const uint16_t &internalDport, const std::string &proto, const NattingTableJsonObject &value);
-  void update_k8sdispatcher_natting_table_external_ip_by_id(const std::string &name, const std::string &internalSrc, const std::string &internalDst, const uint16_t &internalSport, const uint16_t &internalDport, const std::string &proto, const std::string &value);
-  void update_k8sdispatcher_natting_table_external_port_by_id(const std::string &name, const std::string &internalSrc, const std::string &internalDst, const uint16_t &internalSport, const uint16_t &internalDport, const std::string &proto, const uint16_t &value);
-  void update_k8sdispatcher_natting_table_list_by_id(const std::string &name, const std::vector<NattingTableJsonObject> &value);
+  void update_k8sdispatcher_natting_rule_by_id(const std::string &name, const std::string &internalSrc, const std::string &internalDst, const uint16_t &internalSport, const uint16_t &internalDport, const std::string &proto, const NattingRuleJsonObject &value);
+  void update_k8sdispatcher_natting_rule_external_ip_by_id(const std::string &name, const std::string &internalSrc, const std::string &internalDst, const uint16_t &internalSport, const uint16_t &internalDport, const std::string &proto, const std::string &value);
+  void update_k8sdispatcher_natting_rule_external_port_by_id(const std::string &name, const std::string &internalSrc, const std::string &internalDst, const uint16_t &internalSport, const uint16_t &internalDport, const std::string &proto, const uint16_t &value);
+  void update_k8sdispatcher_natting_rule_list_by_id(const std::string &name, const std::vector<NattingRuleJsonObject> &value);
   void update_k8sdispatcher_nodeport_range_by_id(const std::string &name, const std::string &value);
+  void update_k8sdispatcher_nodeport_rule_by_id(const std::string &name, const uint16_t &nodeportPort, const std::string &proto, const NodeportRuleJsonObject &value);
+  void update_k8sdispatcher_nodeport_rule_internal_src_by_id(const std::string &name, const uint16_t &nodeportPort, const std::string &proto, const std::string &value);
+  void update_k8sdispatcher_nodeport_rule_list_by_id(const std::string &name, const std::vector<NodeportRuleJsonObject> &value);
   void update_k8sdispatcher_ports_by_id(const std::string &name, const std::string &portsName, const PortsJsonObject &value);
   void update_k8sdispatcher_ports_list_by_id(const std::string &name, const std::vector<PortsJsonObject> &value);
   void update_k8sdispatcher_ports_type_by_id(const std::string &name, const std::string &portsName, const PortsTypeEnum &value);
@@ -78,7 +91,8 @@ namespace K8sdispatcherApiImpl {
 
   /* help related */
   std::vector<nlohmann::fifo_map<std::string, std::string>> read_k8sdispatcher_list_by_id_get_list();
-  std::vector<nlohmann::fifo_map<std::string, std::string>> read_k8sdispatcher_natting_table_list_by_id_get_list(const std::string &name);
+  std::vector<nlohmann::fifo_map<std::string, std::string>> read_k8sdispatcher_natting_rule_list_by_id_get_list(const std::string &name);
+  std::vector<nlohmann::fifo_map<std::string, std::string>> read_k8sdispatcher_nodeport_rule_list_by_id_get_list(const std::string &name);
   std::vector<nlohmann::fifo_map<std::string, std::string>> read_k8sdispatcher_ports_list_by_id_get_list(const std::string &name);
 
 }

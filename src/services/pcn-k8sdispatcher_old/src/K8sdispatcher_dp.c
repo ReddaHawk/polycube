@@ -87,7 +87,7 @@ struct st_k {
 struct st_v {
   uint32_t new_ip;
   uint16_t new_port;
-  uint8_t originating_rule_type;
+uint8_t originating_rule_type;
 };
 BPF_TABLE("lru_hash", struct st_k, struct st_v, egress_session_table,
 NAT_MAP_DIM);
@@ -332,7 +332,7 @@ static int handle_rx(struct CTXTYPE *ctx, struct pkt_metadata *md) {
     key.proto = proto;
     struct dp_v *value = dp_rules.lookup(&key);
     if(ntohs(dstPort)==30000)
-      pcn_log(ctx, LOG_INFO, "check ingress: %I:%P",dstIp,dstPort);
+    pcn_log(ctx, LOG_INFO, "check ingress: %I:%P",dstIp,dstPort);
     if (value != NULL) {
       pcn_log(ctx, LOG_INFO, "Ingress rule table: hit");
 

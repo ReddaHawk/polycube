@@ -86,9 +86,9 @@ std::vector<nlohmann::fifo_map<std::string, std::string>> read_k8sdispatcher_lis
 }
 
 /**
-* @brief   Create natting-rule by ID
+* @brief   Create natting-table by ID
 *
-* Create operation of resource: natting-rule*
+* Create operation of resource: natting-table*
 *
 * @param[in] name ID of name
 * @param[in] internalSrc ID of internal-src
@@ -96,70 +96,33 @@ std::vector<nlohmann::fifo_map<std::string, std::string>> read_k8sdispatcher_lis
 * @param[in] internalSport ID of internal-sport
 * @param[in] internalDport ID of internal-dport
 * @param[in] proto ID of proto
-* @param[in] value natting-rulebody object
+* @param[in] value natting-tablebody object
 *
 * Responses:
 *
 */
 void
-create_k8sdispatcher_natting_rule_by_id(const std::string &name, const std::string &internalSrc, const std::string &internalDst, const uint16_t &internalSport, const uint16_t &internalDport, const std::string &proto, const NattingRuleJsonObject &value) {
+create_k8sdispatcher_natting_table_by_id(const std::string &name, const std::string &internalSrc, const std::string &internalDst, const uint16_t &internalSport, const uint16_t &internalDport, const std::string &proto, const NattingTableJsonObject &value) {
   auto k8sdispatcher = get_cube(name);
 
-  return k8sdispatcher->addNattingRule(internalSrc, internalDst, internalSport, internalDport, proto, value);
+  return k8sdispatcher->addNattingTable(internalSrc, internalDst, internalSport, internalDport, proto, value);
 }
 
 /**
-* @brief   Create natting-rule by ID
+* @brief   Create natting-table by ID
 *
-* Create operation of resource: natting-rule*
+* Create operation of resource: natting-table*
 *
 * @param[in] name ID of name
-* @param[in] value natting-rulebody object
+* @param[in] value natting-tablebody object
 *
 * Responses:
 *
 */
 void
-create_k8sdispatcher_natting_rule_list_by_id(const std::string &name, const std::vector<NattingRuleJsonObject> &value) {
+create_k8sdispatcher_natting_table_list_by_id(const std::string &name, const std::vector<NattingTableJsonObject> &value) {
   auto k8sdispatcher = get_cube(name);
-  k8sdispatcher->addNattingRuleList(value);
-}
-
-/**
-* @brief   Create nodeport-rule by ID
-*
-* Create operation of resource: nodeport-rule*
-*
-* @param[in] name ID of name
-* @param[in] nodeportPort ID of nodeport-port
-* @param[in] proto ID of proto
-* @param[in] value nodeport-rulebody object
-*
-* Responses:
-*
-*/
-void
-create_k8sdispatcher_nodeport_rule_by_id(const std::string &name, const uint16_t &nodeportPort, const std::string &proto, const NodeportRuleJsonObject &value) {
-  auto k8sdispatcher = get_cube(name);
-
-  return k8sdispatcher->addNodeportRule(nodeportPort, proto, value);
-}
-
-/**
-* @brief   Create nodeport-rule by ID
-*
-* Create operation of resource: nodeport-rule*
-*
-* @param[in] name ID of name
-* @param[in] value nodeport-rulebody object
-*
-* Responses:
-*
-*/
-void
-create_k8sdispatcher_nodeport_rule_list_by_id(const std::string &name, const std::vector<NodeportRuleJsonObject> &value) {
-  auto k8sdispatcher = get_cube(name);
-  k8sdispatcher->addNodeportRuleList(value);
+  k8sdispatcher->addNattingTableList(value);
 }
 
 /**
@@ -199,9 +162,9 @@ create_k8sdispatcher_ports_list_by_id(const std::string &name, const std::vector
 }
 
 /**
-* @brief   Delete natting-rule by ID
+* @brief   Delete natting-table by ID
 *
-* Delete operation of resource: natting-rule*
+* Delete operation of resource: natting-table*
 *
 * @param[in] name ID of name
 * @param[in] internalSrc ID of internal-src
@@ -214,16 +177,16 @@ create_k8sdispatcher_ports_list_by_id(const std::string &name, const std::vector
 *
 */
 void
-delete_k8sdispatcher_natting_rule_by_id(const std::string &name, const std::string &internalSrc, const std::string &internalDst, const uint16_t &internalSport, const uint16_t &internalDport, const std::string &proto) {
+delete_k8sdispatcher_natting_table_by_id(const std::string &name, const std::string &internalSrc, const std::string &internalDst, const uint16_t &internalSport, const uint16_t &internalDport, const std::string &proto) {
   auto k8sdispatcher = get_cube(name);
 
-  return k8sdispatcher->delNattingRule(internalSrc, internalDst, internalSport, internalDport, proto);
+  return k8sdispatcher->delNattingTable(internalSrc, internalDst, internalSport, internalDport, proto);
 }
 
 /**
-* @brief   Delete natting-rule by ID
+* @brief   Delete natting-table by ID
 *
-* Delete operation of resource: natting-rule*
+* Delete operation of resource: natting-table*
 *
 * @param[in] name ID of name
 *
@@ -231,44 +194,9 @@ delete_k8sdispatcher_natting_rule_by_id(const std::string &name, const std::stri
 *
 */
 void
-delete_k8sdispatcher_natting_rule_list_by_id(const std::string &name) {
+delete_k8sdispatcher_natting_table_list_by_id(const std::string &name) {
   auto k8sdispatcher = get_cube(name);
-  k8sdispatcher->delNattingRuleList();
-}
-
-/**
-* @brief   Delete nodeport-rule by ID
-*
-* Delete operation of resource: nodeport-rule*
-*
-* @param[in] name ID of name
-* @param[in] nodeportPort ID of nodeport-port
-* @param[in] proto ID of proto
-*
-* Responses:
-*
-*/
-void
-delete_k8sdispatcher_nodeport_rule_by_id(const std::string &name, const uint16_t &nodeportPort, const std::string &proto) {
-  auto k8sdispatcher = get_cube(name);
-
-  return k8sdispatcher->delNodeportRule(nodeportPort, proto);
-}
-
-/**
-* @brief   Delete nodeport-rule by ID
-*
-* Delete operation of resource: nodeport-rule*
-*
-* @param[in] name ID of name
-*
-* Responses:
-*
-*/
-void
-delete_k8sdispatcher_nodeport_rule_list_by_id(const std::string &name) {
-  auto k8sdispatcher = get_cube(name);
-  k8sdispatcher->delNodeportRuleList();
+  k8sdispatcher->delNattingTableList();
 }
 
 /**
@@ -356,9 +284,9 @@ read_k8sdispatcher_cluster_ip_subnet_by_id(const std::string &name) {
 }
 
 /**
-* @brief   Read natting-rule by ID
+* @brief   Read natting-table by ID
 *
-* Read operation of resource: natting-rule*
+* Read operation of resource: natting-table*
 *
 * @param[in] name ID of name
 * @param[in] internalSrc ID of internal-src
@@ -368,12 +296,12 @@ read_k8sdispatcher_cluster_ip_subnet_by_id(const std::string &name) {
 * @param[in] proto ID of proto
 *
 * Responses:
-* NattingRuleJsonObject
+* NattingTableJsonObject
 */
-NattingRuleJsonObject
-read_k8sdispatcher_natting_rule_by_id(const std::string &name, const std::string &internalSrc, const std::string &internalDst, const uint16_t &internalSport, const uint16_t &internalDport, const std::string &proto) {
+NattingTableJsonObject
+read_k8sdispatcher_natting_table_by_id(const std::string &name, const std::string &internalSrc, const std::string &internalDst, const uint16_t &internalSport, const uint16_t &internalDport, const std::string &proto) {
   auto k8sdispatcher = get_cube(name);
-  return k8sdispatcher->getNattingRule(internalSrc, internalDst, internalSport, internalDport, proto)->toJsonObject();
+  return k8sdispatcher->getNattingTable(internalSrc, internalDst, internalSport, internalDport, proto)->toJsonObject();
 
 }
 
@@ -393,10 +321,10 @@ read_k8sdispatcher_natting_rule_by_id(const std::string &name, const std::string
 * std::string
 */
 std::string
-read_k8sdispatcher_natting_rule_external_ip_by_id(const std::string &name, const std::string &internalSrc, const std::string &internalDst, const uint16_t &internalSport, const uint16_t &internalDport, const std::string &proto) {
+read_k8sdispatcher_natting_table_external_ip_by_id(const std::string &name, const std::string &internalSrc, const std::string &internalDst, const uint16_t &internalSport, const uint16_t &internalDport, const std::string &proto) {
   auto k8sdispatcher = get_cube(name);
-  auto nattingRule = k8sdispatcher->getNattingRule(internalSrc, internalDst, internalSport, internalDport, proto);
-  return nattingRule->getExternalIp();
+  auto nattingTable = k8sdispatcher->getNattingTable(internalSrc, internalDst, internalSport, internalDport, proto);
+  return nattingTable->getExternalIp();
 
 }
 
@@ -416,29 +344,29 @@ read_k8sdispatcher_natting_rule_external_ip_by_id(const std::string &name, const
 * uint16_t
 */
 uint16_t
-read_k8sdispatcher_natting_rule_external_port_by_id(const std::string &name, const std::string &internalSrc, const std::string &internalDst, const uint16_t &internalSport, const uint16_t &internalDport, const std::string &proto) {
+read_k8sdispatcher_natting_table_external_port_by_id(const std::string &name, const std::string &internalSrc, const std::string &internalDst, const uint16_t &internalSport, const uint16_t &internalDport, const std::string &proto) {
   auto k8sdispatcher = get_cube(name);
-  auto nattingRule = k8sdispatcher->getNattingRule(internalSrc, internalDst, internalSport, internalDport, proto);
-  return nattingRule->getExternalPort();
+  auto nattingTable = k8sdispatcher->getNattingTable(internalSrc, internalDst, internalSport, internalDport, proto);
+  return nattingTable->getExternalPort();
 
 }
 
 /**
-* @brief   Read natting-rule by ID
+* @brief   Read natting-table by ID
 *
-* Read operation of resource: natting-rule*
+* Read operation of resource: natting-table*
 *
 * @param[in] name ID of name
 *
 * Responses:
-* std::vector<NattingRuleJsonObject>
+* std::vector<NattingTableJsonObject>
 */
-std::vector<NattingRuleJsonObject>
-read_k8sdispatcher_natting_rule_list_by_id(const std::string &name) {
+std::vector<NattingTableJsonObject>
+read_k8sdispatcher_natting_table_list_by_id(const std::string &name) {
   auto k8sdispatcher = get_cube(name);
-  auto &&nattingRule = k8sdispatcher->getNattingRuleList();
-  std::vector<NattingRuleJsonObject> m;
-  for(auto &i : nattingRule)
+  auto &&nattingTable = k8sdispatcher->getNattingTableList();
+  std::vector<NattingTableJsonObject> m;
+  for(auto &i : nattingTable)
     m.push_back(i->toJsonObject());
   return m;
 }
@@ -458,65 +386,6 @@ read_k8sdispatcher_nodeport_range_by_id(const std::string &name) {
   auto k8sdispatcher = get_cube(name);
   return k8sdispatcher->getNodeportRange();
 
-}
-
-/**
-* @brief   Read nodeport-rule by ID
-*
-* Read operation of resource: nodeport-rule*
-*
-* @param[in] name ID of name
-* @param[in] nodeportPort ID of nodeport-port
-* @param[in] proto ID of proto
-*
-* Responses:
-* NodeportRuleJsonObject
-*/
-NodeportRuleJsonObject
-read_k8sdispatcher_nodeport_rule_by_id(const std::string &name, const uint16_t &nodeportPort, const std::string &proto) {
-  auto k8sdispatcher = get_cube(name);
-  return k8sdispatcher->getNodeportRule(nodeportPort, proto)->toJsonObject();
-
-}
-
-/**
-* @brief   Read internal-src by ID
-*
-* Read operation of resource: internal-src*
-*
-* @param[in] name ID of name
-* @param[in] nodeportPort ID of nodeport-port
-* @param[in] proto ID of proto
-*
-* Responses:
-* std::string
-*/
-std::string
-read_k8sdispatcher_nodeport_rule_internal_src_by_id(const std::string &name, const uint16_t &nodeportPort, const std::string &proto) {
-  auto k8sdispatcher = get_cube(name);
-  auto nodeportRule = k8sdispatcher->getNodeportRule(nodeportPort, proto);
-  return nodeportRule->getInternalSrc();
-
-}
-
-/**
-* @brief   Read nodeport-rule by ID
-*
-* Read operation of resource: nodeport-rule*
-*
-* @param[in] name ID of name
-*
-* Responses:
-* std::vector<NodeportRuleJsonObject>
-*/
-std::vector<NodeportRuleJsonObject>
-read_k8sdispatcher_nodeport_rule_list_by_id(const std::string &name) {
-  auto k8sdispatcher = get_cube(name);
-  auto &&nodeportRule = k8sdispatcher->getNodeportRuleList();
-  std::vector<NodeportRuleJsonObject> m;
-  for(auto &i : nodeportRule)
-    m.push_back(i->toJsonObject());
-  return m;
 }
 
 /**
@@ -594,9 +463,9 @@ read_k8sdispatcher_virtual_client_subnet_by_id(const std::string &name) {
 }
 
 /**
-* @brief   Replace natting-rule by ID
+* @brief   Replace natting-table by ID
 *
-* Replace operation of resource: natting-rule*
+* Replace operation of resource: natting-table*
 *
 * @param[in] name ID of name
 * @param[in] internalSrc ID of internal-src
@@ -604,67 +473,31 @@ read_k8sdispatcher_virtual_client_subnet_by_id(const std::string &name) {
 * @param[in] internalSport ID of internal-sport
 * @param[in] internalDport ID of internal-dport
 * @param[in] proto ID of proto
-* @param[in] value natting-rulebody object
+* @param[in] value natting-tablebody object
 *
 * Responses:
 *
 */
 void
-replace_k8sdispatcher_natting_rule_by_id(const std::string &name, const std::string &internalSrc, const std::string &internalDst, const uint16_t &internalSport, const uint16_t &internalDport, const std::string &proto, const NattingRuleJsonObject &value) {
+replace_k8sdispatcher_natting_table_by_id(const std::string &name, const std::string &internalSrc, const std::string &internalDst, const uint16_t &internalSport, const uint16_t &internalDport, const std::string &proto, const NattingTableJsonObject &value) {
   auto k8sdispatcher = get_cube(name);
 
-  return k8sdispatcher->replaceNattingRule(internalSrc, internalDst, internalSport, internalDport, proto, value);
+  return k8sdispatcher->replaceNattingTable(internalSrc, internalDst, internalSport, internalDport, proto, value);
 }
 
 /**
-* @brief   Replace natting-rule by ID
+* @brief   Replace natting-table by ID
 *
-* Replace operation of resource: natting-rule*
+* Replace operation of resource: natting-table*
 *
 * @param[in] name ID of name
-* @param[in] value natting-rulebody object
+* @param[in] value natting-tablebody object
 *
 * Responses:
 *
 */
 void
-replace_k8sdispatcher_natting_rule_list_by_id(const std::string &name, const std::vector<NattingRuleJsonObject> &value) {
-  throw std::runtime_error("Method not supported");
-}
-
-/**
-* @brief   Replace nodeport-rule by ID
-*
-* Replace operation of resource: nodeport-rule*
-*
-* @param[in] name ID of name
-* @param[in] nodeportPort ID of nodeport-port
-* @param[in] proto ID of proto
-* @param[in] value nodeport-rulebody object
-*
-* Responses:
-*
-*/
-void
-replace_k8sdispatcher_nodeport_rule_by_id(const std::string &name, const uint16_t &nodeportPort, const std::string &proto, const NodeportRuleJsonObject &value) {
-  auto k8sdispatcher = get_cube(name);
-
-  return k8sdispatcher->replaceNodeportRule(nodeportPort, proto, value);
-}
-
-/**
-* @brief   Replace nodeport-rule by ID
-*
-* Replace operation of resource: nodeport-rule*
-*
-* @param[in] name ID of name
-* @param[in] value nodeport-rulebody object
-*
-* Responses:
-*
-*/
-void
-replace_k8sdispatcher_nodeport_rule_list_by_id(const std::string &name, const std::vector<NodeportRuleJsonObject> &value) {
+replace_k8sdispatcher_natting_table_list_by_id(const std::string &name, const std::vector<NattingTableJsonObject> &value) {
   throw std::runtime_error("Method not supported");
 }
 
@@ -773,9 +606,9 @@ update_k8sdispatcher_list_by_id(const std::vector<K8sdispatcherJsonObject> &valu
 }
 
 /**
-* @brief   Update natting-rule by ID
+* @brief   Update natting-table by ID
 *
-* Update operation of resource: natting-rule*
+* Update operation of resource: natting-table*
 *
 * @param[in] name ID of name
 * @param[in] internalSrc ID of internal-src
@@ -783,17 +616,17 @@ update_k8sdispatcher_list_by_id(const std::vector<K8sdispatcherJsonObject> &valu
 * @param[in] internalSport ID of internal-sport
 * @param[in] internalDport ID of internal-dport
 * @param[in] proto ID of proto
-* @param[in] value natting-rulebody object
+* @param[in] value natting-tablebody object
 *
 * Responses:
 *
 */
 void
-update_k8sdispatcher_natting_rule_by_id(const std::string &name, const std::string &internalSrc, const std::string &internalDst, const uint16_t &internalSport, const uint16_t &internalDport, const std::string &proto, const NattingRuleJsonObject &value) {
+update_k8sdispatcher_natting_table_by_id(const std::string &name, const std::string &internalSrc, const std::string &internalDst, const uint16_t &internalSport, const uint16_t &internalDport, const std::string &proto, const NattingTableJsonObject &value) {
   auto k8sdispatcher = get_cube(name);
-  auto nattingRule = k8sdispatcher->getNattingRule(internalSrc, internalDst, internalSport, internalDport, proto);
+  auto nattingTable = k8sdispatcher->getNattingTable(internalSrc, internalDst, internalSport, internalDport, proto);
 
-  return nattingRule->update(value);
+  return nattingTable->update(value);
 }
 
 /**
@@ -813,11 +646,11 @@ update_k8sdispatcher_natting_rule_by_id(const std::string &name, const std::stri
 *
 */
 void
-update_k8sdispatcher_natting_rule_external_ip_by_id(const std::string &name, const std::string &internalSrc, const std::string &internalDst, const uint16_t &internalSport, const uint16_t &internalDport, const std::string &proto, const std::string &value) {
+update_k8sdispatcher_natting_table_external_ip_by_id(const std::string &name, const std::string &internalSrc, const std::string &internalDst, const uint16_t &internalSport, const uint16_t &internalDport, const std::string &proto, const std::string &value) {
   auto k8sdispatcher = get_cube(name);
-  auto nattingRule = k8sdispatcher->getNattingRule(internalSrc, internalDst, internalSport, internalDport, proto);
+  auto nattingTable = k8sdispatcher->getNattingTable(internalSrc, internalDst, internalSport, internalDport, proto);
 
-  return nattingRule->setExternalIp(value);
+  return nattingTable->setExternalIp(value);
 }
 
 /**
@@ -837,26 +670,26 @@ update_k8sdispatcher_natting_rule_external_ip_by_id(const std::string &name, con
 *
 */
 void
-update_k8sdispatcher_natting_rule_external_port_by_id(const std::string &name, const std::string &internalSrc, const std::string &internalDst, const uint16_t &internalSport, const uint16_t &internalDport, const std::string &proto, const uint16_t &value) {
+update_k8sdispatcher_natting_table_external_port_by_id(const std::string &name, const std::string &internalSrc, const std::string &internalDst, const uint16_t &internalSport, const uint16_t &internalDport, const std::string &proto, const uint16_t &value) {
   auto k8sdispatcher = get_cube(name);
-  auto nattingRule = k8sdispatcher->getNattingRule(internalSrc, internalDst, internalSport, internalDport, proto);
+  auto nattingTable = k8sdispatcher->getNattingTable(internalSrc, internalDst, internalSport, internalDport, proto);
 
-  return nattingRule->setExternalPort(value);
+  return nattingTable->setExternalPort(value);
 }
 
 /**
-* @brief   Update natting-rule by ID
+* @brief   Update natting-table by ID
 *
-* Update operation of resource: natting-rule*
+* Update operation of resource: natting-table*
 *
 * @param[in] name ID of name
-* @param[in] value natting-rulebody object
+* @param[in] value natting-tablebody object
 *
 * Responses:
 *
 */
 void
-update_k8sdispatcher_natting_rule_list_by_id(const std::string &name, const std::vector<NattingRuleJsonObject> &value) {
+update_k8sdispatcher_natting_table_list_by_id(const std::string &name, const std::vector<NattingTableJsonObject> &value) {
   throw std::runtime_error("Method not supported");
 }
 
@@ -876,64 +709,6 @@ update_k8sdispatcher_nodeport_range_by_id(const std::string &name, const std::st
   auto k8sdispatcher = get_cube(name);
 
   return k8sdispatcher->setNodeportRange(value);
-}
-
-/**
-* @brief   Update nodeport-rule by ID
-*
-* Update operation of resource: nodeport-rule*
-*
-* @param[in] name ID of name
-* @param[in] nodeportPort ID of nodeport-port
-* @param[in] proto ID of proto
-* @param[in] value nodeport-rulebody object
-*
-* Responses:
-*
-*/
-void
-update_k8sdispatcher_nodeport_rule_by_id(const std::string &name, const uint16_t &nodeportPort, const std::string &proto, const NodeportRuleJsonObject &value) {
-  auto k8sdispatcher = get_cube(name);
-  auto nodeportRule = k8sdispatcher->getNodeportRule(nodeportPort, proto);
-
-  return nodeportRule->update(value);
-}
-
-/**
-* @brief   Update internal-src by ID
-*
-* Update operation of resource: internal-src*
-*
-* @param[in] name ID of name
-* @param[in] nodeportPort ID of nodeport-port
-* @param[in] proto ID of proto
-* @param[in] value Source IP address
-*
-* Responses:
-*
-*/
-void
-update_k8sdispatcher_nodeport_rule_internal_src_by_id(const std::string &name, const uint16_t &nodeportPort, const std::string &proto, const std::string &value) {
-  auto k8sdispatcher = get_cube(name);
-  auto nodeportRule = k8sdispatcher->getNodeportRule(nodeportPort, proto);
-
-  return nodeportRule->setInternalSrc(value);
-}
-
-/**
-* @brief   Update nodeport-rule by ID
-*
-* Update operation of resource: nodeport-rule*
-*
-* @param[in] name ID of name
-* @param[in] value nodeport-rulebody object
-*
-* Responses:
-*
-*/
-void
-update_k8sdispatcher_nodeport_rule_list_by_id(const std::string &name, const std::vector<NodeportRuleJsonObject> &value) {
-  throw std::runtime_error("Method not supported");
 }
 
 /**
@@ -1016,34 +791,18 @@ update_k8sdispatcher_virtual_client_subnet_by_id(const std::string &name, const 
  * help related
  */
 
-std::vector<nlohmann::fifo_map<std::string, std::string>> read_k8sdispatcher_natting_rule_list_by_id_get_list(const std::string &name) {
+std::vector<nlohmann::fifo_map<std::string, std::string>> read_k8sdispatcher_natting_table_list_by_id_get_list(const std::string &name) {
   std::vector<nlohmann::fifo_map<std::string, std::string>> r;
   auto &&k8sdispatcher = get_cube(name);
 
-  auto &&nattingRule = k8sdispatcher->getNattingRuleList();
-  for(auto &i : nattingRule) {
+  auto &&nattingTable = k8sdispatcher->getNattingTableList();
+  for(auto &i : nattingTable) {
     nlohmann::fifo_map<std::string, std::string> keys;
 
     keys["internalSrc"] = i->getInternalSrc();
     keys["internalDst"] = i->getInternalDst();
     keys["internalSport"] = std::to_string(i->getInternalSport());
     keys["internalDport"] = std::to_string(i->getInternalDport());
-    keys["proto"] = i->getProto();
-
-    r.push_back(keys);
-  }
-  return r;
-}
-
-std::vector<nlohmann::fifo_map<std::string, std::string>> read_k8sdispatcher_nodeport_rule_list_by_id_get_list(const std::string &name) {
-  std::vector<nlohmann::fifo_map<std::string, std::string>> r;
-  auto &&k8sdispatcher = get_cube(name);
-
-  auto &&nodeportRule = k8sdispatcher->getNodeportRuleList();
-  for(auto &i : nodeportRule) {
-    nlohmann::fifo_map<std::string, std::string> keys;
-
-    keys["nodeportPort"] = std::to_string(i->getNodeportPort());
     keys["proto"] = i->getProto();
 
     r.push_back(keys);

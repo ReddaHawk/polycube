@@ -39,7 +39,7 @@ Response create_k8sdispatcher_by_id_handler(
   }
 }
 
-Response create_k8sdispatcher_natting_rule_by_id_handler(
+Response create_k8sdispatcher_natting_table_by_id_handler(
   const char *name, const Key *keys,
   size_t num_keys ,
   const char *value) {
@@ -89,99 +89,38 @@ Response create_k8sdispatcher_natting_rule_by_id_handler(
   try {
     auto request_body = nlohmann::json::parse(std::string { value });
     // Getting the body param
-    NattingRuleJsonObject unique_value { request_body };
+    NattingTableJsonObject unique_value { request_body };
 
     unique_value.setInternalSrc(unique_internalSrc);
     unique_value.setInternalDst(unique_internalDst);
     unique_value.setInternalSport(unique_internalSport);
     unique_value.setInternalDport(unique_internalDport);
     unique_value.setProto(unique_proto);
-    create_k8sdispatcher_natting_rule_by_id(unique_name, unique_internalSrc, unique_internalDst, unique_internalSport, unique_internalDport, unique_proto, unique_value);
+    create_k8sdispatcher_natting_table_by_id(unique_name, unique_internalSrc, unique_internalDst, unique_internalSport, unique_internalDport, unique_proto, unique_value);
     return { kCreated, nullptr };
   } catch(const std::exception &e) {
     return { kGenericError, ::strdup(e.what()) };
   }
 }
 
-Response create_k8sdispatcher_natting_rule_list_by_id_handler(
+Response create_k8sdispatcher_natting_table_list_by_id_handler(
   const char *name, const Key *keys,
   size_t num_keys ,
   const char *value) {
   // Getting the path params
   std::string unique_name { name };
   // Getting the body param
-  std::vector<NattingRuleJsonObject> unique_value;
+  std::vector<NattingTableJsonObject> unique_value;
 
   try {
     auto request_body = nlohmann::json::parse(std::string { value });
     // Getting the body param
-    std::vector<NattingRuleJsonObject> unique_value;
+    std::vector<NattingTableJsonObject> unique_value;
     for (auto &j : request_body) {
-      NattingRuleJsonObject a { j };
+      NattingTableJsonObject a { j };
       unique_value.push_back(a);
     }
-    create_k8sdispatcher_natting_rule_list_by_id(unique_name, unique_value);
-    return { kCreated, nullptr };
-  } catch(const std::exception &e) {
-    return { kGenericError, ::strdup(e.what()) };
-  }
-}
-
-Response create_k8sdispatcher_nodeport_rule_by_id_handler(
-  const char *name, const Key *keys,
-  size_t num_keys ,
-  const char *value) {
-  // Getting the path params
-  std::string unique_name { name };
-  uint16_t unique_nodeportPort;
-  for (size_t i = 0; i < num_keys; ++i) {
-    if (!strcmp(keys[i].name, "nodeport-port")) {
-      unique_nodeportPort = keys[i].value.uint16;
-      break;
-    }
-  }
-
-  std::string unique_proto;
-  for (size_t i = 0; i < num_keys; ++i) {
-    if (!strcmp(keys[i].name, "proto")) {
-      unique_proto = std::string { keys[i].value.string };
-      break;
-    }
-  }
-
-
-  try {
-    auto request_body = nlohmann::json::parse(std::string { value });
-    // Getting the body param
-    NodeportRuleJsonObject unique_value { request_body };
-
-    unique_value.setNodeportPort(unique_nodeportPort);
-    unique_value.setProto(unique_proto);
-    create_k8sdispatcher_nodeport_rule_by_id(unique_name, unique_nodeportPort, unique_proto, unique_value);
-    return { kCreated, nullptr };
-  } catch(const std::exception &e) {
-    return { kGenericError, ::strdup(e.what()) };
-  }
-}
-
-Response create_k8sdispatcher_nodeport_rule_list_by_id_handler(
-  const char *name, const Key *keys,
-  size_t num_keys ,
-  const char *value) {
-  // Getting the path params
-  std::string unique_name { name };
-  // Getting the body param
-  std::vector<NodeportRuleJsonObject> unique_value;
-
-  try {
-    auto request_body = nlohmann::json::parse(std::string { value });
-    // Getting the body param
-    std::vector<NodeportRuleJsonObject> unique_value;
-    for (auto &j : request_body) {
-      NodeportRuleJsonObject a { j };
-      unique_value.push_back(a);
-    }
-    create_k8sdispatcher_nodeport_rule_list_by_id(unique_name, unique_value);
+    create_k8sdispatcher_natting_table_list_by_id(unique_name, unique_value);
     return { kCreated, nullptr };
   } catch(const std::exception &e) {
     return { kGenericError, ::strdup(e.what()) };
@@ -254,7 +193,7 @@ Response delete_k8sdispatcher_by_id_handler(
   }
 }
 
-Response delete_k8sdispatcher_natting_rule_by_id_handler(
+Response delete_k8sdispatcher_natting_table_by_id_handler(
   const char *name, const Key *keys,
   size_t num_keys ) {
   // Getting the path params
@@ -301,65 +240,21 @@ Response delete_k8sdispatcher_natting_rule_by_id_handler(
 
 
   try {
-    delete_k8sdispatcher_natting_rule_by_id(unique_name, unique_internalSrc, unique_internalDst, unique_internalSport, unique_internalDport, unique_proto);
+    delete_k8sdispatcher_natting_table_by_id(unique_name, unique_internalSrc, unique_internalDst, unique_internalSport, unique_internalDport, unique_proto);
     return { kOk, nullptr };
   } catch(const std::exception &e) {
     return { kGenericError, ::strdup(e.what()) };
   }
 }
 
-Response delete_k8sdispatcher_natting_rule_list_by_id_handler(
+Response delete_k8sdispatcher_natting_table_list_by_id_handler(
   const char *name, const Key *keys,
   size_t num_keys ) {
   // Getting the path params
   std::string unique_name { name };
 
   try {
-    delete_k8sdispatcher_natting_rule_list_by_id(unique_name);
-    return { kOk, nullptr };
-  } catch(const std::exception &e) {
-    return { kGenericError, ::strdup(e.what()) };
-  }
-}
-
-Response delete_k8sdispatcher_nodeport_rule_by_id_handler(
-  const char *name, const Key *keys,
-  size_t num_keys ) {
-  // Getting the path params
-  std::string unique_name { name };
-  uint16_t unique_nodeportPort;
-  for (size_t i = 0; i < num_keys; ++i) {
-    if (!strcmp(keys[i].name, "nodeport-port")) {
-      unique_nodeportPort = keys[i].value.uint16;
-      break;
-    }
-  }
-
-  std::string unique_proto;
-  for (size_t i = 0; i < num_keys; ++i) {
-    if (!strcmp(keys[i].name, "proto")) {
-      unique_proto = std::string { keys[i].value.string };
-      break;
-    }
-  }
-
-
-  try {
-    delete_k8sdispatcher_nodeport_rule_by_id(unique_name, unique_nodeportPort, unique_proto);
-    return { kOk, nullptr };
-  } catch(const std::exception &e) {
-    return { kGenericError, ::strdup(e.what()) };
-  }
-}
-
-Response delete_k8sdispatcher_nodeport_rule_list_by_id_handler(
-  const char *name, const Key *keys,
-  size_t num_keys ) {
-  // Getting the path params
-  std::string unique_name { name };
-
-  try {
-    delete_k8sdispatcher_nodeport_rule_list_by_id(unique_name);
+    delete_k8sdispatcher_natting_table_list_by_id(unique_name);
     return { kOk, nullptr };
   } catch(const std::exception &e) {
     return { kGenericError, ::strdup(e.what()) };
@@ -471,7 +366,7 @@ Response read_k8sdispatcher_list_by_id_handler(
   }
 }
 
-Response read_k8sdispatcher_natting_rule_by_id_handler(
+Response read_k8sdispatcher_natting_table_by_id_handler(
   const char *name, const Key *keys,
   size_t num_keys ) {
   // Getting the path params
@@ -519,7 +414,7 @@ Response read_k8sdispatcher_natting_rule_by_id_handler(
 
   try {
 
-    auto x = read_k8sdispatcher_natting_rule_by_id(unique_name, unique_internalSrc, unique_internalDst, unique_internalSport, unique_internalDport, unique_proto);
+    auto x = read_k8sdispatcher_natting_table_by_id(unique_name, unique_internalSrc, unique_internalDst, unique_internalSport, unique_internalDport, unique_proto);
     nlohmann::json response_body;
     response_body = x.toJson();
     return { kOk, ::strdup(response_body.dump().c_str()) };
@@ -528,7 +423,7 @@ Response read_k8sdispatcher_natting_rule_by_id_handler(
   }
 }
 
-Response read_k8sdispatcher_natting_rule_external_ip_by_id_handler(
+Response read_k8sdispatcher_natting_table_external_ip_by_id_handler(
   const char *name, const Key *keys,
   size_t num_keys ) {
   // Getting the path params
@@ -576,7 +471,7 @@ Response read_k8sdispatcher_natting_rule_external_ip_by_id_handler(
 
   try {
 
-    auto x = read_k8sdispatcher_natting_rule_external_ip_by_id(unique_name, unique_internalSrc, unique_internalDst, unique_internalSport, unique_internalDport, unique_proto);
+    auto x = read_k8sdispatcher_natting_table_external_ip_by_id(unique_name, unique_internalSrc, unique_internalDst, unique_internalSport, unique_internalDport, unique_proto);
     nlohmann::json response_body;
     response_body = x;
     return { kOk, ::strdup(response_body.dump().c_str()) };
@@ -585,7 +480,7 @@ Response read_k8sdispatcher_natting_rule_external_ip_by_id_handler(
   }
 }
 
-Response read_k8sdispatcher_natting_rule_external_port_by_id_handler(
+Response read_k8sdispatcher_natting_table_external_port_by_id_handler(
   const char *name, const Key *keys,
   size_t num_keys ) {
   // Getting the path params
@@ -633,7 +528,7 @@ Response read_k8sdispatcher_natting_rule_external_port_by_id_handler(
 
   try {
 
-    auto x = read_k8sdispatcher_natting_rule_external_port_by_id(unique_name, unique_internalSrc, unique_internalDst, unique_internalSport, unique_internalDport, unique_proto);
+    auto x = read_k8sdispatcher_natting_table_external_port_by_id(unique_name, unique_internalSrc, unique_internalDst, unique_internalSport, unique_internalDport, unique_proto);
     nlohmann::json response_body;
     response_body = x;
     return { kOk, ::strdup(response_body.dump().c_str()) };
@@ -642,7 +537,7 @@ Response read_k8sdispatcher_natting_rule_external_port_by_id_handler(
   }
 }
 
-Response read_k8sdispatcher_natting_rule_list_by_id_handler(
+Response read_k8sdispatcher_natting_table_list_by_id_handler(
   const char *name, const Key *keys,
   size_t num_keys ) {
   // Getting the path params
@@ -650,7 +545,7 @@ Response read_k8sdispatcher_natting_rule_list_by_id_handler(
 
   try {
 
-    auto x = read_k8sdispatcher_natting_rule_list_by_id(unique_name);
+    auto x = read_k8sdispatcher_natting_table_list_by_id(unique_name);
     nlohmann::json response_body;
     for (auto &i : x) {
       response_body += i.toJson();
@@ -672,91 +567,6 @@ Response read_k8sdispatcher_nodeport_range_by_id_handler(
     auto x = read_k8sdispatcher_nodeport_range_by_id(unique_name);
     nlohmann::json response_body;
     response_body = x;
-    return { kOk, ::strdup(response_body.dump().c_str()) };
-  } catch(const std::exception &e) {
-    return { kGenericError, ::strdup(e.what()) };
-  }
-}
-
-Response read_k8sdispatcher_nodeport_rule_by_id_handler(
-  const char *name, const Key *keys,
-  size_t num_keys ) {
-  // Getting the path params
-  std::string unique_name { name };
-  uint16_t unique_nodeportPort;
-  for (size_t i = 0; i < num_keys; ++i) {
-    if (!strcmp(keys[i].name, "nodeport-port")) {
-      unique_nodeportPort = keys[i].value.uint16;
-      break;
-    }
-  }
-
-  std::string unique_proto;
-  for (size_t i = 0; i < num_keys; ++i) {
-    if (!strcmp(keys[i].name, "proto")) {
-      unique_proto = std::string { keys[i].value.string };
-      break;
-    }
-  }
-
-
-  try {
-
-    auto x = read_k8sdispatcher_nodeport_rule_by_id(unique_name, unique_nodeportPort, unique_proto);
-    nlohmann::json response_body;
-    response_body = x.toJson();
-    return { kOk, ::strdup(response_body.dump().c_str()) };
-  } catch(const std::exception &e) {
-    return { kGenericError, ::strdup(e.what()) };
-  }
-}
-
-Response read_k8sdispatcher_nodeport_rule_internal_src_by_id_handler(
-  const char *name, const Key *keys,
-  size_t num_keys ) {
-  // Getting the path params
-  std::string unique_name { name };
-  uint16_t unique_nodeportPort;
-  for (size_t i = 0; i < num_keys; ++i) {
-    if (!strcmp(keys[i].name, "nodeport-port")) {
-      unique_nodeportPort = keys[i].value.uint16;
-      break;
-    }
-  }
-
-  std::string unique_proto;
-  for (size_t i = 0; i < num_keys; ++i) {
-    if (!strcmp(keys[i].name, "proto")) {
-      unique_proto = std::string { keys[i].value.string };
-      break;
-    }
-  }
-
-
-  try {
-
-    auto x = read_k8sdispatcher_nodeport_rule_internal_src_by_id(unique_name, unique_nodeportPort, unique_proto);
-    nlohmann::json response_body;
-    response_body = x;
-    return { kOk, ::strdup(response_body.dump().c_str()) };
-  } catch(const std::exception &e) {
-    return { kGenericError, ::strdup(e.what()) };
-  }
-}
-
-Response read_k8sdispatcher_nodeport_rule_list_by_id_handler(
-  const char *name, const Key *keys,
-  size_t num_keys ) {
-  // Getting the path params
-  std::string unique_name { name };
-
-  try {
-
-    auto x = read_k8sdispatcher_nodeport_rule_list_by_id(unique_name);
-    nlohmann::json response_body;
-    for (auto &i : x) {
-      response_body += i.toJson();
-    }
     return { kOk, ::strdup(response_body.dump().c_str()) };
   } catch(const std::exception &e) {
     return { kGenericError, ::strdup(e.what()) };
@@ -869,7 +679,7 @@ Response replace_k8sdispatcher_by_id_handler(
   }
 }
 
-Response replace_k8sdispatcher_natting_rule_by_id_handler(
+Response replace_k8sdispatcher_natting_table_by_id_handler(
   const char *name, const Key *keys,
   size_t num_keys ,
   const char *value) {
@@ -919,99 +729,38 @@ Response replace_k8sdispatcher_natting_rule_by_id_handler(
   try {
     auto request_body = nlohmann::json::parse(std::string { value });
     // Getting the body param
-    NattingRuleJsonObject unique_value { request_body };
+    NattingTableJsonObject unique_value { request_body };
 
     unique_value.setInternalSrc(unique_internalSrc);
     unique_value.setInternalDst(unique_internalDst);
     unique_value.setInternalSport(unique_internalSport);
     unique_value.setInternalDport(unique_internalDport);
     unique_value.setProto(unique_proto);
-    replace_k8sdispatcher_natting_rule_by_id(unique_name, unique_internalSrc, unique_internalDst, unique_internalSport, unique_internalDport, unique_proto, unique_value);
+    replace_k8sdispatcher_natting_table_by_id(unique_name, unique_internalSrc, unique_internalDst, unique_internalSport, unique_internalDport, unique_proto, unique_value);
     return { kOk, nullptr };
   } catch(const std::exception &e) {
     return { kGenericError, ::strdup(e.what()) };
   }
 }
 
-Response replace_k8sdispatcher_natting_rule_list_by_id_handler(
+Response replace_k8sdispatcher_natting_table_list_by_id_handler(
   const char *name, const Key *keys,
   size_t num_keys ,
   const char *value) {
   // Getting the path params
   std::string unique_name { name };
   // Getting the body param
-  std::vector<NattingRuleJsonObject> unique_value;
+  std::vector<NattingTableJsonObject> unique_value;
 
   try {
     auto request_body = nlohmann::json::parse(std::string { value });
     // Getting the body param
-    std::vector<NattingRuleJsonObject> unique_value;
+    std::vector<NattingTableJsonObject> unique_value;
     for (auto &j : request_body) {
-      NattingRuleJsonObject a { j };
+      NattingTableJsonObject a { j };
       unique_value.push_back(a);
     }
-    replace_k8sdispatcher_natting_rule_list_by_id(unique_name, unique_value);
-    return { kOk, nullptr };
-  } catch(const std::exception &e) {
-    return { kGenericError, ::strdup(e.what()) };
-  }
-}
-
-Response replace_k8sdispatcher_nodeport_rule_by_id_handler(
-  const char *name, const Key *keys,
-  size_t num_keys ,
-  const char *value) {
-  // Getting the path params
-  std::string unique_name { name };
-  uint16_t unique_nodeportPort;
-  for (size_t i = 0; i < num_keys; ++i) {
-    if (!strcmp(keys[i].name, "nodeport-port")) {
-      unique_nodeportPort = keys[i].value.uint16;
-      break;
-    }
-  }
-
-  std::string unique_proto;
-  for (size_t i = 0; i < num_keys; ++i) {
-    if (!strcmp(keys[i].name, "proto")) {
-      unique_proto = std::string { keys[i].value.string };
-      break;
-    }
-  }
-
-
-  try {
-    auto request_body = nlohmann::json::parse(std::string { value });
-    // Getting the body param
-    NodeportRuleJsonObject unique_value { request_body };
-
-    unique_value.setNodeportPort(unique_nodeportPort);
-    unique_value.setProto(unique_proto);
-    replace_k8sdispatcher_nodeport_rule_by_id(unique_name, unique_nodeportPort, unique_proto, unique_value);
-    return { kOk, nullptr };
-  } catch(const std::exception &e) {
-    return { kGenericError, ::strdup(e.what()) };
-  }
-}
-
-Response replace_k8sdispatcher_nodeport_rule_list_by_id_handler(
-  const char *name, const Key *keys,
-  size_t num_keys ,
-  const char *value) {
-  // Getting the path params
-  std::string unique_name { name };
-  // Getting the body param
-  std::vector<NodeportRuleJsonObject> unique_value;
-
-  try {
-    auto request_body = nlohmann::json::parse(std::string { value });
-    // Getting the body param
-    std::vector<NodeportRuleJsonObject> unique_value;
-    for (auto &j : request_body) {
-      NodeportRuleJsonObject a { j };
-      unique_value.push_back(a);
-    }
-    replace_k8sdispatcher_nodeport_rule_list_by_id(unique_name, unique_value);
+    replace_k8sdispatcher_natting_table_list_by_id(unique_name, unique_value);
     return { kOk, nullptr };
   } catch(const std::exception &e) {
     return { kGenericError, ::strdup(e.what()) };
@@ -1149,7 +898,7 @@ Response update_k8sdispatcher_list_by_id_handler(
   }
 }
 
-Response update_k8sdispatcher_natting_rule_by_id_handler(
+Response update_k8sdispatcher_natting_table_by_id_handler(
   const char *name, const Key *keys,
   size_t num_keys ,
   const char *value) {
@@ -1199,21 +948,21 @@ Response update_k8sdispatcher_natting_rule_by_id_handler(
   try {
     auto request_body = nlohmann::json::parse(std::string { value });
     // Getting the body param
-    NattingRuleJsonObject unique_value { request_body };
+    NattingTableJsonObject unique_value { request_body };
 
     unique_value.setInternalSrc(unique_internalSrc);
     unique_value.setInternalDst(unique_internalDst);
     unique_value.setInternalSport(unique_internalSport);
     unique_value.setInternalDport(unique_internalDport);
     unique_value.setProto(unique_proto);
-    update_k8sdispatcher_natting_rule_by_id(unique_name, unique_internalSrc, unique_internalDst, unique_internalSport, unique_internalDport, unique_proto, unique_value);
+    update_k8sdispatcher_natting_table_by_id(unique_name, unique_internalSrc, unique_internalDst, unique_internalSport, unique_internalDport, unique_proto, unique_value);
     return { kOk, nullptr };
   } catch(const std::exception &e) {
     return { kGenericError, ::strdup(e.what()) };
   }
 }
 
-Response update_k8sdispatcher_natting_rule_external_ip_by_id_handler(
+Response update_k8sdispatcher_natting_table_external_ip_by_id_handler(
   const char *name, const Key *keys,
   size_t num_keys ,
   const char *value) {
@@ -1264,14 +1013,14 @@ Response update_k8sdispatcher_natting_rule_external_ip_by_id_handler(
     auto request_body = nlohmann::json::parse(std::string { value });
     // The conversion is done automatically by the json library
     std::string unique_value = request_body;
-    update_k8sdispatcher_natting_rule_external_ip_by_id(unique_name, unique_internalSrc, unique_internalDst, unique_internalSport, unique_internalDport, unique_proto, unique_value);
+    update_k8sdispatcher_natting_table_external_ip_by_id(unique_name, unique_internalSrc, unique_internalDst, unique_internalSport, unique_internalDport, unique_proto, unique_value);
     return { kOk, nullptr };
   } catch(const std::exception &e) {
     return { kGenericError, ::strdup(e.what()) };
   }
 }
 
-Response update_k8sdispatcher_natting_rule_external_port_by_id_handler(
+Response update_k8sdispatcher_natting_table_external_port_by_id_handler(
   const char *name, const Key *keys,
   size_t num_keys ,
   const char *value) {
@@ -1322,31 +1071,31 @@ Response update_k8sdispatcher_natting_rule_external_port_by_id_handler(
     auto request_body = nlohmann::json::parse(std::string { value });
     // The conversion is done automatically by the json library
     uint16_t unique_value = request_body;
-    update_k8sdispatcher_natting_rule_external_port_by_id(unique_name, unique_internalSrc, unique_internalDst, unique_internalSport, unique_internalDport, unique_proto, unique_value);
+    update_k8sdispatcher_natting_table_external_port_by_id(unique_name, unique_internalSrc, unique_internalDst, unique_internalSport, unique_internalDport, unique_proto, unique_value);
     return { kOk, nullptr };
   } catch(const std::exception &e) {
     return { kGenericError, ::strdup(e.what()) };
   }
 }
 
-Response update_k8sdispatcher_natting_rule_list_by_id_handler(
+Response update_k8sdispatcher_natting_table_list_by_id_handler(
   const char *name, const Key *keys,
   size_t num_keys ,
   const char *value) {
   // Getting the path params
   std::string unique_name { name };
   // Getting the body param
-  std::vector<NattingRuleJsonObject> unique_value;
+  std::vector<NattingTableJsonObject> unique_value;
 
   try {
     auto request_body = nlohmann::json::parse(std::string { value });
     // Getting the body param
-    std::vector<NattingRuleJsonObject> unique_value;
+    std::vector<NattingTableJsonObject> unique_value;
     for (auto &j : request_body) {
-      NattingRuleJsonObject a { j };
+      NattingTableJsonObject a { j };
       unique_value.push_back(a);
     }
-    update_k8sdispatcher_natting_rule_list_by_id(unique_name, unique_value);
+    update_k8sdispatcher_natting_table_list_by_id(unique_name, unique_value);
     return { kOk, nullptr };
   } catch(const std::exception &e) {
     return { kGenericError, ::strdup(e.what()) };
@@ -1365,101 +1114,6 @@ Response update_k8sdispatcher_nodeport_range_by_id_handler(
     // The conversion is done automatically by the json library
     std::string unique_value = request_body;
     update_k8sdispatcher_nodeport_range_by_id(unique_name, unique_value);
-    return { kOk, nullptr };
-  } catch(const std::exception &e) {
-    return { kGenericError, ::strdup(e.what()) };
-  }
-}
-
-Response update_k8sdispatcher_nodeport_rule_by_id_handler(
-  const char *name, const Key *keys,
-  size_t num_keys ,
-  const char *value) {
-  // Getting the path params
-  std::string unique_name { name };
-  uint16_t unique_nodeportPort;
-  for (size_t i = 0; i < num_keys; ++i) {
-    if (!strcmp(keys[i].name, "nodeport-port")) {
-      unique_nodeportPort = keys[i].value.uint16;
-      break;
-    }
-  }
-
-  std::string unique_proto;
-  for (size_t i = 0; i < num_keys; ++i) {
-    if (!strcmp(keys[i].name, "proto")) {
-      unique_proto = std::string { keys[i].value.string };
-      break;
-    }
-  }
-
-
-  try {
-    auto request_body = nlohmann::json::parse(std::string { value });
-    // Getting the body param
-    NodeportRuleJsonObject unique_value { request_body };
-
-    unique_value.setNodeportPort(unique_nodeportPort);
-    unique_value.setProto(unique_proto);
-    update_k8sdispatcher_nodeport_rule_by_id(unique_name, unique_nodeportPort, unique_proto, unique_value);
-    return { kOk, nullptr };
-  } catch(const std::exception &e) {
-    return { kGenericError, ::strdup(e.what()) };
-  }
-}
-
-Response update_k8sdispatcher_nodeport_rule_internal_src_by_id_handler(
-  const char *name, const Key *keys,
-  size_t num_keys ,
-  const char *value) {
-  // Getting the path params
-  std::string unique_name { name };
-  uint16_t unique_nodeportPort;
-  for (size_t i = 0; i < num_keys; ++i) {
-    if (!strcmp(keys[i].name, "nodeport-port")) {
-      unique_nodeportPort = keys[i].value.uint16;
-      break;
-    }
-  }
-
-  std::string unique_proto;
-  for (size_t i = 0; i < num_keys; ++i) {
-    if (!strcmp(keys[i].name, "proto")) {
-      unique_proto = std::string { keys[i].value.string };
-      break;
-    }
-  }
-
-
-  try {
-    auto request_body = nlohmann::json::parse(std::string { value });
-    // The conversion is done automatically by the json library
-    std::string unique_value = request_body;
-    update_k8sdispatcher_nodeport_rule_internal_src_by_id(unique_name, unique_nodeportPort, unique_proto, unique_value);
-    return { kOk, nullptr };
-  } catch(const std::exception &e) {
-    return { kGenericError, ::strdup(e.what()) };
-  }
-}
-
-Response update_k8sdispatcher_nodeport_rule_list_by_id_handler(
-  const char *name, const Key *keys,
-  size_t num_keys ,
-  const char *value) {
-  // Getting the path params
-  std::string unique_name { name };
-  // Getting the body param
-  std::vector<NodeportRuleJsonObject> unique_value;
-
-  try {
-    auto request_body = nlohmann::json::parse(std::string { value });
-    // Getting the body param
-    std::vector<NodeportRuleJsonObject> unique_value;
-    for (auto &j : request_body) {
-      NodeportRuleJsonObject a { j };
-      unique_value.push_back(a);
-    }
-    update_k8sdispatcher_nodeport_rule_list_by_id(unique_name, unique_value);
     return { kOk, nullptr };
   } catch(const std::exception &e) {
     return { kGenericError, ::strdup(e.what()) };
@@ -1570,20 +1224,11 @@ Response k8sdispatcher_list_by_id_help(
   return { kOk, ::strdup(val.dump().c_str()) };
 }
 
-Response k8sdispatcher_natting_rule_list_by_id_help(
+Response k8sdispatcher_natting_table_list_by_id_help(
   const char *name, const Key *keys, size_t num_keys) {
   // Getting the path params
   std::string unique_name { name };
-  nlohmann::json val = read_k8sdispatcher_natting_rule_list_by_id_get_list(unique_name);
-
-  return { kOk, ::strdup(val.dump().c_str()) };
-}
-
-Response k8sdispatcher_nodeport_rule_list_by_id_help(
-  const char *name, const Key *keys, size_t num_keys) {
-  // Getting the path params
-  std::string unique_name { name };
-  nlohmann::json val = read_k8sdispatcher_nodeport_rule_list_by_id_get_list(unique_name);
+  nlohmann::json val = read_k8sdispatcher_natting_table_list_by_id_get_list(unique_name);
 
   return { kOk, ::strdup(val.dump().c_str()) };
 }

@@ -38,22 +38,14 @@ void K8sdispatcherBase::update(const K8sdispatcherJsonObject &conf) {
   if (conf.virtualClientSubnetIsSet()) {
     setVirtualClientSubnet(conf.getVirtualClientSubnet());
   }
-  if (conf.nattingRuleIsSet()) {
-    for (auto &i : conf.getNattingRule()) {
+  if (conf.nattingTableIsSet()) {
+    for (auto &i : conf.getNattingTable()) {
       auto internalSrc = i.getInternalSrc();
       auto internalDst = i.getInternalDst();
       auto internalSport = i.getInternalSport();
       auto internalDport = i.getInternalDport();
       auto proto = i.getProto();
-      auto m = getNattingRule(internalSrc, internalDst, internalSport, internalDport, proto);
-      m->update(i);
-    }
-  }
-  if (conf.nodeportRuleIsSet()) {
-    for (auto &i : conf.getNodeportRule()) {
-      auto nodeportPort = i.getNodeportPort();
-      auto proto = i.getProto();
-      auto m = getNodeportRule(nodeportPort, proto);
+      auto m = getNattingTable(internalSrc, internalDst, internalSport, internalDport, proto);
       m->update(i);
     }
   }
@@ -73,11 +65,8 @@ K8sdispatcherJsonObject K8sdispatcherBase::toJsonObject() {
   conf.setClusterIpSubnet(getClusterIpSubnet());
   conf.setClientSubnet(getClientSubnet());
   conf.setVirtualClientSubnet(getVirtualClientSubnet());
-  for(auto &i : getNattingRuleList()) {
-    conf.addNattingRule(i->toJsonObject());
-  }
-  for(auto &i : getNodeportRuleList()) {
-    conf.addNodeportRule(i->toJsonObject());
+  for(auto &i : getNattingTableList()) {
+    conf.addNattingTable(i->toJsonObject());
   }
   conf.setNodeportRange(getNodeportRange());
 
@@ -119,59 +108,36 @@ std::shared_ptr<Ports> K8sdispatcherBase::getPorts(const std::string &name) {
 std::vector<std::shared_ptr<Ports>> K8sdispatcherBase::getPortsList() {
   return get_ports();
 }
-void K8sdispatcherBase::addNattingRuleList(const std::vector<NattingRuleJsonObject> &conf) {
+void K8sdispatcherBase::addNattingTableList(const std::vector<NattingTableJsonObject> &conf) {
   for (auto &i : conf) {
     std::string internalSrc_ = i.getInternalSrc();
     std::string internalDst_ = i.getInternalDst();
     uint16_t internalSport_ = i.getInternalSport();
     uint16_t internalDport_ = i.getInternalDport();
     std::string proto_ = i.getProto();
-    addNattingRule(internalSrc_, internalDst_, internalSport_, internalDport_, proto_, i);
+    addNattingTable(internalSrc_, internalDst_, internalSport_, internalDport_, proto_, i);
   }
 }
 
-void K8sdispatcherBase::replaceNattingRule(const std::string &internalSrc, const std::string &internalDst, const uint16_t &internalSport, const uint16_t &internalDport, const std::string &proto, const NattingRuleJsonObject &conf) {
-  delNattingRule(internalSrc, internalDst, internalSport, internalDport, proto);
+void K8sdispatcherBase::replaceNattingTable(const std::string &internalSrc, const std::string &internalDst, const uint16_t &internalSport, const uint16_t &internalDport, const std::string &proto, const NattingTableJsonObject &conf) {
+  delNattingTable(internalSrc, internalDst, internalSport, internalDport, proto);
   std::string internalSrc_ = conf.getInternalSrc();
   std::string internalDst_ = conf.getInternalDst();
   uint16_t internalSport_ = conf.getInternalSport();
   uint16_t internalDport_ = conf.getInternalDport();
   std::string proto_ = conf.getProto();
-  addNattingRule(internalSrc_, internalDst_, internalSport_, internalDport_, proto_, conf);
+  addNattingTable(internalSrc_, internalDst_, internalSport_, internalDport_, proto_, conf);
 }
 
-void K8sdispatcherBase::delNattingRuleList() {
-  auto elements = getNattingRuleList();
+void K8sdispatcherBase::delNattingTableList() {
+  auto elements = getNattingTableList();
   for (auto &i : elements) {
     std::string internalSrc_ = i->getInternalSrc();
     std::string internalDst_ = i->getInternalDst();
     uint16_t internalSport_ = i->getInternalSport();
     uint16_t internalDport_ = i->getInternalDport();
     std::string proto_ = i->getProto();
-    delNattingRule(internalSrc_, internalDst_, internalSport_, internalDport_, proto_);
-  }
-}
-void K8sdispatcherBase::addNodeportRuleList(const std::vector<NodeportRuleJsonObject> &conf) {
-  for (auto &i : conf) {
-    uint16_t nodeportPort_ = i.getNodeportPort();
-    std::string proto_ = i.getProto();
-    addNodeportRule(nodeportPort_, proto_, i);
-  }
-}
-
-void K8sdispatcherBase::replaceNodeportRule(const uint16_t &nodeportPort, const std::string &proto, const NodeportRuleJsonObject &conf) {
-  delNodeportRule(nodeportPort, proto);
-  uint16_t nodeportPort_ = conf.getNodeportPort();
-  std::string proto_ = conf.getProto();
-  addNodeportRule(nodeportPort_, proto_, conf);
-}
-
-void K8sdispatcherBase::delNodeportRuleList() {
-  auto elements = getNodeportRuleList();
-  for (auto &i : elements) {
-    uint16_t nodeportPort_ = i->getNodeportPort();
-    std::string proto_ = i->getProto();
-    delNodeportRule(nodeportPort_, proto_);
+    delNattingTable(internalSrc_, internalDst_, internalSport_, internalDport_, proto_);
   }
 }
 

@@ -8,17 +8,16 @@
 
 #pragma once
 
-#include <cinttypes>
-#include "../base/K8sdispatcherBase.h"
 
-#include "NattingRule.h"
-#include "NodeportRule.h"
+#include "../base/K8sdispatcherBase.h"
+#include <cinttypes>
+
+#include "NattingTable.h"
 #include "Ports.h"
 
-
 using namespace polycube::service::model;
-using namespace polycube::service;
 
+using namespace polycube::service;
 /* definitions copied from datapath */
 struct dp_k {
   uint32_t mask;
@@ -84,32 +83,19 @@ class K8sdispatcher : public K8sdispatcherBase {
   /// <summary>
   ///
   /// </summary>
-  std::shared_ptr<NattingRule> getNattingRule(const std::string &internalSrc, const std::string &internalDst, const uint16_t &internalSport, const uint16_t &internalDport, const std::string &proto) override;
-  std::vector<std::shared_ptr<NattingRule>> getNattingRuleList() override;
-  void addNattingRule(const std::string &internalSrc, const std::string &internalDst, const uint16_t &internalSport, const uint16_t &internalDport, const std::string &proto, const NattingRuleJsonObject &conf) override;
-  void addNattingRuleList(const std::vector<NattingRuleJsonObject> &conf) override;
-  void replaceNattingRule(const std::string &internalSrc, const std::string &internalDst, const uint16_t &internalSport, const uint16_t &internalDport, const std::string &proto, const NattingRuleJsonObject &conf) override;
-  void delNattingRule(const std::string &internalSrc, const std::string &internalDst, const uint16_t &internalSport, const uint16_t &internalDport, const std::string &proto) override;
-  void delNattingRuleList() override;
-
-  /// <summary>
-  ///
-  /// </summary>
-  std::shared_ptr<NodeportRule> getNodeportRule(const uint16_t &nodeportPort, const std::string &proto) override;
-  std::vector<std::shared_ptr<NodeportRule>> getNodeportRuleList() override;
-  void addNodeportRule(const uint16_t &nodeportPort, const std::string &proto, const NodeportRuleJsonObject &conf) override;
-  void addNodeportRuleList(const std::vector<NodeportRuleJsonObject> &conf) override;
-  void replaceNodeportRule(const uint16_t &nodeportPort, const std::string &proto, const NodeportRuleJsonObject &conf) override;
-  void delNodeportRule(const uint16_t &nodeportPort, const std::string &proto) override;
-  void delNodeportRuleList() override;
+  std::shared_ptr<NattingTable> getNattingTable(const std::string &internalSrc, const std::string &internalDst, const uint16_t &internalSport, const uint16_t &internalDport, const std::string &proto) override;
+  std::vector<std::shared_ptr<NattingTable>> getNattingTableList() override;
+  void addNattingTable(const std::string &internalSrc, const std::string &internalDst, const uint16_t &internalSport, const uint16_t &internalDport, const std::string &proto, const NattingTableJsonObject &conf) override;
+  void addNattingTableList(const std::vector<NattingTableJsonObject> &conf) override;
+  void replaceNattingTable(const std::string &internalSrc, const std::string &internalDst, const uint16_t &internalSport, const uint16_t &internalDport, const std::string &proto, const NattingTableJsonObject &conf) override;
+  void delNattingTable(const std::string &internalSrc, const std::string &internalDst, const uint16_t &internalSport, const uint16_t &internalDport, const std::string &proto) override;
+  void delNattingTableList() override;
 
   /// <summary>
   /// Port range used for NodePort services
   /// </summary>
   std::string getNodeportRange() override;
   void setNodeportRange(const std::string &value) override;
-
-
   void update(const K8sdispatcherJsonObject &conf);
   K8sdispatcherJsonObject toJsonObject();
   void doSetClusterIpSubnet(const std::string &value);
@@ -120,6 +106,7 @@ class K8sdispatcher : public K8sdispatcherBase {
   void doSetExternalMac(const std::string &value);
   uint8_t proto_from_string_to_int(const std::string &proto);
   std::string proto_from_int_to_string(const uint8_t proto);
+
 
  private:
   std::string nodeport_range_;

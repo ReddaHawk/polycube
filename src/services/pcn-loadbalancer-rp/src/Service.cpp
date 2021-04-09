@@ -195,7 +195,7 @@ void Service::updateKernelServiceMap(
 
   for (const auto &backend_ip : consistent_array) {
     index++;
-
+    logger()->debug("[Service] prima di getbackend");
     auto bck = getBackend(backend_ip);
 
     vip key{
@@ -415,7 +415,7 @@ std::shared_ptr<spdlog::logger> Service::logger() {
 
 std::shared_ptr<ServiceBackend> Service::getBackend(const std::string &ip) {
   logger()->trace(
-      "[ServiceBackend] Received request to read new backend for service {0}, "
+      "[ServiceBackend3] Received request to read new backend for service {0}, "
       "{1}, {2}",
       getVip(), getVport(),
       ServiceJsonObject::ServiceProtoEnum_to_string(getProto()));
@@ -423,7 +423,7 @@ std::shared_ptr<ServiceBackend> Service::getBackend(const std::string &ip) {
 
   if (service_backends_.count(ip) == 0) {
     logger()->error(
-        "[ServiceBackend] There are no entries associated with that key");
+        "[ServiceBackend]  entries associated with that key");
     throw std::runtime_error("There are no entries associated with that key");
   }
 

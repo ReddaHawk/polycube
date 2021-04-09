@@ -20,8 +20,7 @@ add_library(pcn-k8sdispatcher SHARED
   ${API_SOURCES}
   ${BASE_SOURCES}
   K8sdispatcher.cpp
-  NattingRule.cpp
-  NodeportRule.cpp
+  NattingTable.cpp
   Ports.cpp
   K8sdispatcher-lib.cpp)
 

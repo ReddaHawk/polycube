@@ -252,7 +252,7 @@ std::shared_ptr<Service> Lbrp::getService(const std::string &vip,
                                           const uint16_t &vport,
                                           const ServiceProtoEnum &proto) {
   // This method retrieves the pointer to Service object specified by its keys.
-  logger()->debug("[Service] Received request to read a service entry");
+  logger()->debug("[Service] Received request to read a service entry {0}",service_map_.size());
   logger()->debug("[Service] Virtual IP: {0}, virtual port: {1}, protocol: {2}",
                   vip, vport,
                   ServiceJsonObject::ServiceProtoEnum_to_string(proto));
@@ -319,6 +319,18 @@ void Lbrp::addService(const std::string &vip, const uint16_t &vport,
         "ICMP Service requires 0 as virtual port. Since this parameter is "
         "useless for ICMP services");
   }
+
+  Service::ServiceKey key =
+      Service::ServiceKey(vip, vport, Service::convertProtoToNumber(proto));
+  Service service = Service(*this,conf);
+  if (service_map_.count(key) != 0) {
+    logger()->error("[Service] This service already exists");
+    throw std::runtime_error("This service already exists");
+  }
+  service_map_.insert(std::make_pair(key,service));
+
+
+  //service_map_.erase(key);
 }
 
 void Lbrp::addServiceList(const std::vector<ServiceJsonObject> &conf) {

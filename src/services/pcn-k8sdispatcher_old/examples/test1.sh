@@ -41,7 +41,7 @@ polycubectl connect br1ns:toveth2 veth2root
 # Create and connect bridge port to router
 polycubectl br1ns ports add to_router
 # Create router
-polycubectl router add r1 loglevel=TRACE
+polycubectl router add r1 #loglevel=TRACE
 # Create router port to bridge
 polycubectl r1 ports add to_br1ns ip=10.10.7.254/24
 # Create router port to physical interface
@@ -54,13 +54,18 @@ polycubectl connect r1:to_br1ns br1ns:to_router
 # the current default gateway)
 # (You can look for the default gateway by using 'ip route' and searching
 # for the 'default' route)
+polycubectl lbrp add lb1 loglevel=TRACE
+polycubectl lbrp lb1 ports add port1 type=FRONTEND
+polycubectl lbrp lb1 ports add port2 type=BACKEND
+
 # Create NAT
 polycubectl k8sdispatcher k1 cluster-ip-subnet=10.0.0.0/24 client-subnet=10.0.1.0/24 virtual-client-subnet=1.1.1.0/16 #loglevel=TRACE
 polycubectl k1 ports add to_int type=FRONTEND
 polycubectl k1 ports add to_router type=BACKEND
 # (EXTRA) To connect PC to Internet too, as of December 2019:
 # Create new veth to connect root namespace to br1ns
-polycubectl connect r1:to_internet k1:to_router
+polycubectl connect r1:to_internet lb1:port2
+polycubectl connect lb1:port1 k1:to_router
 polycubectl connect k1:to_int eno1
 polycubectl r1 route add 0.0.0.0/0 192.168.0.254
 #polycubectl r1 address address=192.168.0.254 mac=00:62:ec:7d:72:71 interface=to_internet

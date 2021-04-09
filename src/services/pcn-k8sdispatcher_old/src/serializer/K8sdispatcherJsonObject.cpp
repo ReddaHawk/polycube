@@ -23,8 +23,7 @@ K8sdispatcherJsonObject::K8sdispatcherJsonObject() {
   m_clusterIpSubnetIsSet = false;
   m_clientSubnetIsSet = false;
   m_virtualClientSubnetIsSet = false;
-  m_nattingRuleIsSet = false;
-  m_nodeportRuleIsSet = false;
+  m_nattingTableIsSet = false;
   m_nodeportRange = "30000-32767";
   m_nodeportRangeIsSet = true;
 }
@@ -36,8 +35,7 @@ K8sdispatcherJsonObject::K8sdispatcherJsonObject(const nlohmann::json &val) :
   m_clusterIpSubnetIsSet = false;
   m_clientSubnetIsSet = false;
   m_virtualClientSubnetIsSet = false;
-  m_nattingRuleIsSet = false;
-  m_nodeportRuleIsSet = false;
+  m_nattingTableIsSet = false;
   m_nodeportRangeIsSet = false;
 
 
@@ -66,22 +64,13 @@ K8sdispatcherJsonObject::K8sdispatcherJsonObject(const nlohmann::json &val) :
     setVirtualClientSubnet(val.at("virtual-client-subnet").get<std::string>());
   }
 
-  if (val.count("natting-rule")) {
-    for (auto& item : val["natting-rule"]) {
-      NattingRuleJsonObject newItem{ item };
-      m_nattingRule.push_back(newItem);
+  if (val.count("natting-table")) {
+    for (auto& item : val["natting-table"]) {
+      NattingTableJsonObject newItem{ item };
+      m_nattingTable.push_back(newItem);
     }
 
-    m_nattingRuleIsSet = true;
-  }
-
-  if (val.count("nodeport-rule")) {
-    for (auto& item : val["nodeport-rule"]) {
-      NodeportRuleJsonObject newItem{ item };
-      m_nodeportRule.push_back(newItem);
-    }
-
-    m_nodeportRuleIsSet = true;
+    m_nattingTableIsSet = true;
   }
 
   if (val.count("nodeport-range")) {
@@ -124,23 +113,12 @@ nlohmann::json K8sdispatcherJsonObject::toJson() const {
 
   {
     nlohmann::json jsonArray;
-    for (auto& item : m_nattingRule) {
+    for (auto& item : m_nattingTable) {
       jsonArray.push_back(JsonObjectBase::toJson(item));
     }
 
     if (jsonArray.size() > 0) {
-      val["natting-rule"] = jsonArray;
-    }
-  }
-
-  {
-    nlohmann::json jsonArray;
-    for (auto& item : m_nodeportRule) {
-      jsonArray.push_back(JsonObjectBase::toJson(item));
-    }
-
-    if (jsonArray.size() > 0) {
-      val["nodeport-rule"] = jsonArray;
+      val["natting-table"] = jsonArray;
     }
   }
 
@@ -197,9 +175,7 @@ bool K8sdispatcherJsonObject::clusterIpSubnetIsSet() const {
   return m_clusterIpSubnetIsSet;
 }
 
-void K8sdispatcherJsonObject::unsetClusterIpSubnet() {
-  m_clusterIpSubnetIsSet = false;
-}
+
 
 std::string K8sdispatcherJsonObject::getClientSubnet() const {
   return m_clientSubnet;
@@ -214,9 +190,7 @@ bool K8sdispatcherJsonObject::clientSubnetIsSet() const {
   return m_clientSubnetIsSet;
 }
 
-void K8sdispatcherJsonObject::unsetClientSubnet() {
-  m_clientSubnetIsSet = false;
-}
+
 
 std::string K8sdispatcherJsonObject::getVirtualClientSubnet() const {
   return m_virtualClientSubnet;
@@ -231,44 +205,24 @@ bool K8sdispatcherJsonObject::virtualClientSubnetIsSet() const {
   return m_virtualClientSubnetIsSet;
 }
 
-void K8sdispatcherJsonObject::unsetVirtualClientSubnet() {
-  m_virtualClientSubnetIsSet = false;
+
+
+const std::vector<NattingTableJsonObject>& K8sdispatcherJsonObject::getNattingTable() const{
+  return m_nattingTable;
 }
 
-const std::vector<NattingRuleJsonObject>& K8sdispatcherJsonObject::getNattingRule() const{
-  return m_nattingRule;
-}
-
-void K8sdispatcherJsonObject::addNattingRule(NattingRuleJsonObject value) {
-  m_nattingRule.push_back(value);
-  m_nattingRuleIsSet = true;
-}
-
-
-bool K8sdispatcherJsonObject::nattingRuleIsSet() const {
-  return m_nattingRuleIsSet;
-}
-
-void K8sdispatcherJsonObject::unsetNattingRule() {
-  m_nattingRuleIsSet = false;
-}
-
-const std::vector<NodeportRuleJsonObject>& K8sdispatcherJsonObject::getNodeportRule() const{
-  return m_nodeportRule;
-}
-
-void K8sdispatcherJsonObject::addNodeportRule(NodeportRuleJsonObject value) {
-  m_nodeportRule.push_back(value);
-  m_nodeportRuleIsSet = true;
+void K8sdispatcherJsonObject::addNattingTable(NattingTableJsonObject value) {
+  m_nattingTable.push_back(value);
+  m_nattingTableIsSet = true;
 }
 
 
-bool K8sdispatcherJsonObject::nodeportRuleIsSet() const {
-  return m_nodeportRuleIsSet;
+bool K8sdispatcherJsonObject::nattingTableIsSet() const {
+  return m_nattingTableIsSet;
 }
 
-void K8sdispatcherJsonObject::unsetNodeportRule() {
-  m_nodeportRuleIsSet = false;
+void K8sdispatcherJsonObject::unsetNattingTable() {
+  m_nattingTableIsSet = false;
 }
 
 std::string K8sdispatcherJsonObject::getNodeportRange() const {

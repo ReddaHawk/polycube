@@ -19,10 +19,9 @@
 
 #include "JsonObjectBase.h"
 
-#include "NodeportRuleJsonObject.h"
-#include "NattingRuleJsonObject.h"
 #include "PortsJsonObject.h"
 #include <vector>
+#include "NattingTableJsonObject.h"
 #include "polycube/services/cube.h"
 
 namespace polycube {
@@ -62,7 +61,6 @@ public:
   std::string getClusterIpSubnet() const;
   void setClusterIpSubnet(std::string value);
   bool clusterIpSubnetIsSet() const;
-  void unsetClusterIpSubnet();
 
   /// <summary>
   /// Range of IPs of pods in this node
@@ -70,7 +68,6 @@ public:
   std::string getClientSubnet() const;
   void setClientSubnet(std::string value);
   bool clientSubnetIsSet() const;
-  void unsetClientSubnet();
 
   /// <summary>
   /// Range where client&#39;s IPs are mapped into
@@ -78,23 +75,14 @@ public:
   std::string getVirtualClientSubnet() const;
   void setVirtualClientSubnet(std::string value);
   bool virtualClientSubnetIsSet() const;
-  void unsetVirtualClientSubnet();
 
   /// <summary>
   ///
   /// </summary>
-  const std::vector<NattingRuleJsonObject>& getNattingRule() const;
-  void addNattingRule(NattingRuleJsonObject value);
-  bool nattingRuleIsSet() const;
-  void unsetNattingRule();
-
-  /// <summary>
-  ///
-  /// </summary>
-  const std::vector<NodeportRuleJsonObject>& getNodeportRule() const;
-  void addNodeportRule(NodeportRuleJsonObject value);
-  bool nodeportRuleIsSet() const;
-  void unsetNodeportRule();
+  const std::vector<NattingTableJsonObject>& getNattingTable() const;
+  void addNattingTable(NattingTableJsonObject value);
+  bool nattingTableIsSet() const;
+  void unsetNattingTable();
 
   /// <summary>
   /// Port range used for NodePort services
@@ -115,10 +103,8 @@ private:
   bool m_clientSubnetIsSet;
   std::string m_virtualClientSubnet;
   bool m_virtualClientSubnetIsSet;
-  std::vector<NattingRuleJsonObject> m_nattingRule;
-  bool m_nattingRuleIsSet;
-  std::vector<NodeportRuleJsonObject> m_nodeportRule;
-  bool m_nodeportRuleIsSet;
+  std::vector<NattingTableJsonObject> m_nattingTable;
+  bool m_nattingTableIsSet;
   std::string m_nodeportRange;
   bool m_nodeportRangeIsSet;
 };
