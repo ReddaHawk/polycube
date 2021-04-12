@@ -7,20 +7,16 @@
 # In order to install Go into another location, set the environment variables $GOROOT and $GOPATH before (un)installing:
 
 function cleanup() {
-  set +e
-
-  if [ -f "$TEMP_DIRECTORY/go.tar.gz" ]; then
-	rm "$TEMP_DIRECTORY/go.tar.gz"
+  
+	rm -f "$TEMP_DIRECTORY/go.tar.gz"
 
 }
 
-trap cluenup EXIT
+trap cleanup EXIT
 set -e
 
 VERSION="1.16"
-echo "GOSCRIPT"
-echo "$1"
-echo "$2"
+
 [ -z "$GOROOT" ] && GOROOT="/usr/local/go"
 [ -z "$GOPATH" ] && GOPATH="$HOME/go"
 
@@ -125,7 +121,7 @@ fi
 
 if [ -d "$GOROOT" ]; then
     echo "The Go install directory ($GOROOT) already exists. Exiting."
-    exit 1
+    return
 fi
 
 PACKAGE_NAME="go$VERSION.$PLATFORM.tar.gz"

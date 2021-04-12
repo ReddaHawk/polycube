@@ -9,7 +9,7 @@ $SUDO apt update
 $SUDO bash -c "apt install --allow-unauthenticated -y wget gnupg2 software-properties-common"
 
 echo "Install golang"
-source scripts/go_installer.sh #--version 1.13.2
+source scripts/go_installer.sh "" #--version 1.13.2
 
 
 $SUDO apt update
