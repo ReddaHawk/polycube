@@ -14,8 +14,10 @@
 #include "NattingRule.h"
 #include "NodeportRule.h"
 #include "Ports.h"
-
-
+#include "polycube/services/cube.h"
+#include "polycube/services/port.h"
+#include "polycube/services/utils.h"
+#include "hash_tuple.h"
 using namespace polycube::service::model;
 using namespace polycube::service;
 
@@ -44,6 +46,7 @@ struct sm_v {
 } __attribute__((packed));
 
 class K8sdispatcher : public K8sdispatcherBase {
+  friend class NodeportRule;
  public:
   K8sdispatcher(const std::string name, const K8sdispatcherJsonObject &conf);
   virtual ~K8sdispatcher();
@@ -121,6 +124,8 @@ class K8sdispatcher : public K8sdispatcherBase {
   uint8_t proto_from_string_to_int(const std::string &proto);
   std::string proto_from_int_to_string(const uint8_t proto);
 
+  typedef std::tuple<std::string,uint16_t> NodeportKey;
+
  private:
   std::string nodeport_range_;
   uint16_t nodeport_range_low_;
@@ -138,7 +143,8 @@ class K8sdispatcher : public K8sdispatcherBase {
 
   uint32_t cluster_ip_subnet_;
   uint32_t cluster_ip_mask_;
-  std::unordered_map<NodeportRule::NodeportKey , NodeportRule> nodeport_map_;
+
+  std::unordered_map<NodeportKey , NodeportRule> nodeport_map_;
   uint32_t ip_to_dec(const std::string &ip);
   void parse_cidr(const std::string &cidr, uint32_t *subnet, uint32_t *netmask);
   void reloadConfig();

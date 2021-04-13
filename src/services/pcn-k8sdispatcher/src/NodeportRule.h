@@ -31,7 +31,7 @@ class NodeportRule : public NodeportRuleBase {
   /// Destination L4 port number
   /// </summary>
   uint16_t getNodeportPort() override;
-  typedef std::tuple<uint16_t, uint8_t> NodeportKey;
+
 
   /// <summary>
   /// L4 protocol

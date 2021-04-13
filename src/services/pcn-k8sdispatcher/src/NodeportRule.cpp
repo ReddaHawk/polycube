@@ -14,7 +14,7 @@
 
 
 NodeportRule::NodeportRule(K8sdispatcher &parent, const NodeportRuleJsonObject &conf)
-    : NodeportRuleBase(parent_) {
+    : NodeportRuleBase(parent), parent_(parent) {
 
   //todo modifica
 

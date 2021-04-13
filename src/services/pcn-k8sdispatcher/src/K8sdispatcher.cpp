@@ -11,7 +11,7 @@
 
 #include "K8sdispatcher.h"
 #include "K8sdispatcher_dp.h"
-
+using namespace std;
 K8sdispatcher::K8sdispatcher(const std::string name, const K8sdispatcherJsonObject &conf)
   : Cube(conf.getBase(), {}, {}),
     K8sdispatcherBase(name) {
@@ -32,15 +32,19 @@ K8sdispatcher::K8sdispatcher(const std::string name, const K8sdispatcherJsonObje
   if (conf.virtualClientSubnetIsSet()) {
     doSetVirtualClientSubnet(conf.getVirtualClientSubnet());
   }
+  if (conf.nodeportRangeIsSet())
+  {
+    doSetNodeportRange(conf.getNodeportRange());
+  }
 
-  addNattingRuleList(conf.getNattingRule());
+  //addNattingRuleList(conf.getNattingRule());
   addNodeportRuleList(conf.getNodeportRule());
-  setNodeportRange(conf.getNodeportRange());
+  //setNodeportRange(conf.getNodeportRange());
 
-  add_program(getFlags() + k8sdispatcher_code, 0);
 
   addPortsList(conf.getPorts());
 
+  add_program(getFlags() + k8sdispatcher_code, 0);
 
 }
 
@@ -48,8 +52,8 @@ K8sdispatcherJsonObject K8sdispatcher::toJsonObject() {
   K8sdispatcherJsonObject conf;
   conf.setBase(Cube::to_json());
 
-  for (auto &i : getNattingTableList()) {
-    conf.addNattingTable(i->toJsonObject());
+  for (auto &i : getNattingRuleList()) {
+    conf.addNattingRule(i->toJsonObject());
   }
 
   for (auto &i : getPortsList()) {
@@ -407,7 +411,7 @@ std::shared_ptr<NattingRule> K8sdispatcher::getNattingRule(const std::string &in
     uint16_t newPort = value.new_port;
     uint8_t originatingRule = value.originating_rule_type;
     ;
-    auto entry = std::make_shared<NattingTable>(
+    auto entry = std::make_shared<NattingRule>(
         *this, internalSrc, internalDst, internalSport, internalDport,
         proto_from_string_to_int(proto), newIp, newPort);
     return entry;
@@ -478,19 +482,37 @@ std::vector<std::shared_ptr<NodeportRule>> K8sdispatcher::getNodeportRuleList() 
 }
 
 void K8sdispatcher::addNodeportRule(const uint16_t &nodeportPort, const std::string &proto, const NodeportRuleJsonObject &conf) {
-  NodeportRule::NodeportKey key = NodeportRule::NodeportKey(nodeportPort,proto_from_string_to_int(proto));
-  if(nodeport_map_.count(key) != 0){
+  logger()->info("add nodeportRule");
+  NodeportKey key = NodeportKey(proto,nodeportPort);
+  //nodeport_map_.count(key);
+
+  if(nodeport_map_.count(key) == 1){
     logger()->error("This nodeport rule already exists");
     throw std::runtime_error("This nodeport rule already exists");
   }
+
   NodeportRule rule = NodeportRule(*this,conf);
   nodeport_map_.insert(std::make_pair(key,rule));
 
+  auto dp_rules =get_hash_table<dp_k, dp_v>(
+      "dp_rules", 0, ProgramType::INGRESS);
+  //logger()->info("%I",
+  dp_k key_rule{
+      .mask = 56, .external_ip = htonl(external_ip_), .external_port = htons(nodeportPort), .proto = proto_from_string_to_int(proto),
+  };
+  dp_v value{
+      .internal_ip = htonl(ip_to_dec(rule.getInternalSrc())),
+      .internal_port = htons(nodeportPort),
+      .entry_type = 0,
+  };
+
+  dp_rules.set(key_rule, value);
 }
 
 // Basic default implementation, place your extension here (if needed)
 void K8sdispatcher::addNodeportRuleList(const std::vector<NodeportRuleJsonObject> &conf) {
   // call default implementation in base class
+  logger()->info("add nodeport rule");
   K8sdispatcherBase::addNodeportRuleList(conf);
 }
 
