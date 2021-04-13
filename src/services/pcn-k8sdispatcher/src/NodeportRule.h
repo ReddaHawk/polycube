@@ -31,9 +31,16 @@ class NodeportRule : public NodeportRuleBase {
   /// Destination L4 port number
   /// </summary>
   uint16_t getNodeportPort() override;
+  typedef std::tuple<uint16_t, uint8_t> NodeportKey;
 
   /// <summary>
   /// L4 protocol
   /// </summary>
   std::string getProto() override;
+ private:
+  K8sdispatcher& parent_;
+  uint16_t  port_;
+  std::string proto_;
+  std::string internal_ip_;
+
 };

@@ -138,7 +138,7 @@ class K8sdispatcher : public K8sdispatcherBase {
 
   uint32_t cluster_ip_subnet_;
   uint32_t cluster_ip_mask_;
-
+  std::unordered_map<NodeportRule::NodeportKey , NodeportRule> nodeport_map_;
   uint32_t ip_to_dec(const std::string &ip);
   void parse_cidr(const std::string &cidr, uint32_t *subnet, uint32_t *netmask);
   void reloadConfig();

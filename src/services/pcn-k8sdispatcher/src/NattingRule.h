@@ -11,6 +11,21 @@
 
 #include "../base/NattingRuleBase.h"
 
+struct st_k {
+  uint32_t src_ip;
+  uint32_t dst_ip;
+  uint16_t src_port;
+  uint16_t dst_port;
+  uint8_t proto;
+} __attribute__((packed));
+
+struct st_v {
+  uint32_t new_ip;
+  uint16_t new_port;
+  uint8_t originating_rule_type;
+} __attribute__((packed));
+
+
 
 class K8sdispatcher;
 

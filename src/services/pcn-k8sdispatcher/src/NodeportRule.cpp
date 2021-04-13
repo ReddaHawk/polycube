@@ -14,17 +14,20 @@
 
 
 NodeportRule::NodeportRule(K8sdispatcher &parent, const NodeportRuleJsonObject &conf)
-    : NodeportRuleBase(parent) {
-  if (conf.internalSrcIsSet()) {
-    setInternalSrc(conf.getInternalSrc());
-  }
+    : NodeportRuleBase(parent_) {
+
+  //todo modifica
+
+  internal_ip_ = conf.getInternalSrc();
+  proto_ = conf.getProto();
+  port_ = conf.getNodeportPort();
 
 }
 
 NodeportRule::~NodeportRule() {}
 
 std::string NodeportRule::getInternalSrc() {
-  throw std::runtime_error("NodeportRule::getInternalSrc: Method not implemented");
+    return internal_ip_;
 }
 
 void NodeportRule::setInternalSrc(const std::string &value) {
@@ -32,11 +35,11 @@ void NodeportRule::setInternalSrc(const std::string &value) {
 }
 
 uint16_t NodeportRule::getNodeportPort() {
-  throw std::runtime_error("NodeportRule::getNodeportPort: Method not implemented");
+  return port_;
 }
 
 std::string NodeportRule::getProto() {
-  throw std::runtime_error("NodeportRule::getProto: Method not implemented");
+    return proto_;
 }
 
 

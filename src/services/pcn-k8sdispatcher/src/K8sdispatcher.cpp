@@ -157,7 +157,6 @@ void K8sdispatcher::doSetExternalIp(const std::string &value){
 }
 
 void K8sdispatcher::doSetExternalMac(const std::string &value){
-  //todo inject mac to datapath
   external_mac_string_=value;
   external_mac_ = mac_string_to_nbo_uint(value);
   reloadConfig();
@@ -427,7 +426,7 @@ std::vector<std::shared_ptr<NattingRule>> K8sdispatcher::getNattingRuleList() {
       auto key = pair.first;
       auto value = pair.second;
 
-      auto entry = std::make_shared<NattingTable>(
+      auto entry = std::make_shared<NattingRule>(
           *this, polycube::service::utils::nbo_uint_to_ip_string(key.src_ip),
           polycube::service::utils::nbo_uint_to_ip_string(key.dst_ip), ntohs(key.src_port),
           ntohs(key.dst_port), key.proto,
@@ -479,7 +478,14 @@ std::vector<std::shared_ptr<NodeportRule>> K8sdispatcher::getNodeportRuleList() 
 }
 
 void K8sdispatcher::addNodeportRule(const uint16_t &nodeportPort, const std::string &proto, const NodeportRuleJsonObject &conf) {
-  throw std::runtime_error("K8sdispatcher::addNodeportRule: Method not implemented");
+  NodeportRule::NodeportKey key = NodeportRule::NodeportKey(nodeportPort,proto_from_string_to_int(proto));
+  if(nodeport_map_.count(key) != 0){
+    logger()->error("This nodeport rule already exists");
+    throw std::runtime_error("This nodeport rule already exists");
+  }
+  NodeportRule rule = NodeportRule(*this,conf);
+  nodeport_map_.insert(std::make_pair(key,rule));
+
 }
 
 // Basic default implementation, place your extension here (if needed)
