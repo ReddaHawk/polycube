@@ -295,8 +295,10 @@ static int handle_rx(struct CTXTYPE *ctx, struct pkt_metadata *md) {
       newIp = value->new_ip;
       newPort = value->new_port;
       pcn_log(ctx, LOG_INFO, "Egress session table: hit %I, %P",newIp, newPort);
-      if(srcIp == EXTERNAL_IP){
-        pcn_log(ctx, LOG_INFO, "Egress nodeport");
+
+      if(srcIp == EXTERNAL_IP && ntohs(srcPort)>=NODEPORT_RANGE_LOW && ntohs(srcPort)<=NODEPORT_RANGE_HIGH)
+      {
+        pcn_log(ctx, LOG_INFO, "Egress nodeport packet");
         rule_type = NAT_DST;
       }
       rule_type = NAT_SRC;
@@ -315,11 +317,14 @@ static int handle_rx(struct CTXTYPE *ctx, struct pkt_metadata *md) {
 
       newIp = value->new_ip;
       newPort = value->new_port;
+
       pcn_log(ctx, LOG_INFO, "Ingress session table: hit with %I %P",newIp, newPort);
-      if(newIp == NATTED_IP){
+
+      if(value->originating_rule_type == NODEPORT_CLUSTER){
         pcn_log(ctx, LOG_INFO, "Ingress session table nodeport");
         rule_type = NAT_SRC;
       }
+      else
       rule_type = NAT_DST;
 
       update_session_table = 0;
