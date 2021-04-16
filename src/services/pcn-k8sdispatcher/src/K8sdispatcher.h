@@ -150,6 +150,7 @@ class K8sdispatcher : public K8sdispatcherBase {
   void reloadConfig();
   std::string external_ip_string_;
   uint32_t external_ip_;
+  uint32_t natted_ip_;
   std::string external_mac_string_;
   uint64_t external_mac_ : 48;
   std::string getFlags();

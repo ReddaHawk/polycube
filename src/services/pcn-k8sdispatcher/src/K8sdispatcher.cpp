@@ -17,10 +17,12 @@ K8sdispatcher::K8sdispatcher(const std::string name, const K8sdispatcherJsonObje
     K8sdispatcherBase(name) {
   logger()->info("Creating K8sdispatcher instance");
   // call do... functions to avoid reloading code so many times
+  /*
   doSetClusterIpSubnet(conf.getClusterIpSubnet());
   doSetClientSubnet(conf.getClientSubnet());
   doSetVirtualClientSubnet(conf.getVirtualClientSubnet());
   doSetNodeportRange(conf.getNodeportRange());
+   */
   if (conf.clusterIpSubnetIsSet()) {
     doSetClusterIpSubnet(conf.getClusterIpSubnet());
   }
@@ -106,6 +108,8 @@ void K8sdispatcher::reloadConfig() {
            std::to_string(htonl(virtual_client_subnet_)) + "\n";
   flags += "#define EXTERNAL_IP " +
            std::to_string(htonl(external_ip_))+ "\n";
+  flags += "#define NATTED_IP " +
+           std::to_string(htonl(natted_ip_))+ "\n";
   flags += "#define EXTERNAL_MAC " +
            std::to_string(external_mac_)+ "\n";
 
@@ -157,6 +161,7 @@ void K8sdispatcher::doSetExternalIp(const std::string &value){
   uint32_t external_ip_subnet;
   external_ip_string_ = value;
   parse_cidr(value, &external_ip_, &external_ip_subnet);
+  parse_cidr("13.1.0.1/23", &natted_ip_,&external_ip_subnet);
   reloadConfig();
 }
 
@@ -260,7 +265,8 @@ std::string K8sdispatcher::getFlags() {
            std::to_string(htonl(external_ip_))+ "\n";
   flags += "#define EXTERNAL_MAC " +
            std::to_string(htonl(external_mac_))+ "\n";
-
+  flags += "#define NATTED_IP " +
+           std::to_string(htonl(natted_ip_))+ "\n";
   return flags;
 }
 
@@ -421,20 +427,24 @@ std::shared_ptr<NattingRule> K8sdispatcher::getNattingRule(const std::string &in
 }
 
 std::vector<std::shared_ptr<NattingRule>> K8sdispatcher::getNattingRuleList() {
-  logger()->debug("getNattingTable");
+  logger()->info("getNattingTable");
   std::vector<std::shared_ptr<NattingRule>> entries;
   try {
     auto table = get_hash_table<st_k, st_v>("egress_session_table");
+    logger()->info("getNattingTable");
     auto map_entries = table.get_all();
+    logger()->info("getNattingTable");
     for (auto &pair : map_entries) {
       auto key = pair.first;
       auto value = pair.second;
+      logger()->info("getNattingTable");
 
       auto entry = std::make_shared<NattingRule>(
           *this, polycube::service::utils::nbo_uint_to_ip_string(key.src_ip),
           polycube::service::utils::nbo_uint_to_ip_string(key.dst_ip), ntohs(key.src_port),
           ntohs(key.dst_port), key.proto,
           polycube::service::utils::nbo_uint_to_ip_string(value.new_ip), ntohs(value.new_port));
+      logger()->info("getNattingTable");
 
       entries.push_back(entry);
     }
@@ -505,7 +515,12 @@ void K8sdispatcher::addNodeportRule(const uint16_t &nodeportPort, const std::str
       .internal_port = htons(nodeportPort),
       .entry_type = 0,
   };
-
+  if(conf.getInternalSrc()=="13.13.13.13"){
+    logger()->info("Non local");
+    value.entry_type = 4;
+  } else {
+    value.entry_type = 3;
+  }
   dp_rules.set(key_rule, value);
 }
 
