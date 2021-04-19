@@ -22,7 +22,7 @@ K8sdispatcherJsonObject::K8sdispatcherJsonObject() {
   m_portsIsSet = false;
   m_clusterIpSubnetIsSet = false;
   m_clientSubnetIsSet = false;
-  m_virtualClientSubnetIsSet = false;
+  m_internalSrcIpIsSet = false;
   m_nattingRuleIsSet = false;
   m_nodeportRuleIsSet = false;
   m_nodeportRange = "30000-32767";
@@ -35,7 +35,7 @@ K8sdispatcherJsonObject::K8sdispatcherJsonObject(const nlohmann::json &val) :
   m_portsIsSet = false;
   m_clusterIpSubnetIsSet = false;
   m_clientSubnetIsSet = false;
-  m_virtualClientSubnetIsSet = false;
+  m_internalSrcIpIsSet = false;
   m_nattingRuleIsSet = false;
   m_nodeportRuleIsSet = false;
   m_nodeportRangeIsSet = false;
@@ -62,8 +62,8 @@ K8sdispatcherJsonObject::K8sdispatcherJsonObject(const nlohmann::json &val) :
     setClientSubnet(val.at("client-subnet").get<std::string>());
   }
 
-  if (val.count("virtual-client-subnet")) {
-    setVirtualClientSubnet(val.at("virtual-client-subnet").get<std::string>());
+  if (val.count("internal-src-ip")) {
+    setInternalSrcIp(val.at("internal-src-ip").get<std::string>());
   }
 
   if (val.count("natting-rule")) {
@@ -118,8 +118,8 @@ nlohmann::json K8sdispatcherJsonObject::toJson() const {
     val["client-subnet"] = m_clientSubnet;
   }
 
-  if (m_virtualClientSubnetIsSet) {
-    val["virtual-client-subnet"] = m_virtualClientSubnet;
+  if (m_internalSrcIpIsSet) {
+    val["internal-src-ip"] = m_internalSrcIp;
   }
 
   {
@@ -218,22 +218,20 @@ void K8sdispatcherJsonObject::unsetClientSubnet() {
   m_clientSubnetIsSet = false;
 }
 
-std::string K8sdispatcherJsonObject::getVirtualClientSubnet() const {
-  return m_virtualClientSubnet;
+std::string K8sdispatcherJsonObject::getInternalSrcIp() const {
+  return m_internalSrcIp;
 }
 
-void K8sdispatcherJsonObject::setVirtualClientSubnet(std::string value) {
-  m_virtualClientSubnet = value;
-  m_virtualClientSubnetIsSet = true;
+void K8sdispatcherJsonObject::setInternalSrcIp(std::string value) {
+  m_internalSrcIp = value;
+  m_internalSrcIpIsSet = true;
 }
 
-bool K8sdispatcherJsonObject::virtualClientSubnetIsSet() const {
-  return m_virtualClientSubnetIsSet;
+bool K8sdispatcherJsonObject::internalSrcIpIsSet() const {
+  return m_internalSrcIpIsSet;
 }
 
-void K8sdispatcherJsonObject::unsetVirtualClientSubnet() {
-  m_virtualClientSubnetIsSet = false;
-}
+
 
 const std::vector<NattingRuleJsonObject>& K8sdispatcherJsonObject::getNattingRule() const{
   return m_nattingRule;

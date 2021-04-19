@@ -73,12 +73,11 @@ public:
   void unsetClientSubnet();
 
   /// <summary>
-  /// Range where client&#39;s IPs are mapped into
+  /// Internal src ip used for services with externaltrafficpolicy&#x3D;cluster
   /// </summary>
-  std::string getVirtualClientSubnet() const;
-  void setVirtualClientSubnet(std::string value);
-  bool virtualClientSubnetIsSet() const;
-  void unsetVirtualClientSubnet();
+  std::string getInternalSrcIp() const;
+  void setInternalSrcIp(std::string value);
+  bool internalSrcIpIsSet() const;
 
   /// <summary>
   ///
@@ -113,8 +112,8 @@ private:
   bool m_clusterIpSubnetIsSet;
   std::string m_clientSubnet;
   bool m_clientSubnetIsSet;
-  std::string m_virtualClientSubnet;
-  bool m_virtualClientSubnetIsSet;
+  std::string m_internalSrcIp;
+  bool m_internalSrcIpIsSet;
   std::vector<NattingRuleJsonObject> m_nattingRule;
   bool m_nattingRuleIsSet;
   std::vector<NodeportRuleJsonObject> m_nodeportRule;

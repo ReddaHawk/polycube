@@ -329,8 +329,6 @@ void Lbrp::addService(const std::string &vip, const uint16_t &vport,
   Service service = Service(*this,conf);
   service_map_.insert(std::make_pair(key,service));
 
-
-  //service_map_.erase(key);
 }
 
 void Lbrp::addServiceList(const std::vector<ServiceJsonObject> &conf) {

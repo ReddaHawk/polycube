@@ -59,7 +59,7 @@ polycubectl lbrp lb1 ports add port1 type=FRONTEND
 polycubectl lbrp lb1 ports add port2 type=BACKEND
 
 # Create NAT
-polycubectl k8sdispatcher k1 cluster-ip-subnet=10.0.0.0/24 client-subnet=10.0.1.0/24 virtual-client-subnet=1.1.1.0/16 #loglevel=TRACE
+polycubectl k8sdispatcher k1 internal-src-ip=3.3.3.1 #loglevel=TRACE
 polycubectl k1 ports add to_int type=FRONTEND
 polycubectl k1 ports add to_router type=BACKEND
 # (EXTRA) To connect PC to Internet too, as of December 2019:
@@ -70,6 +70,10 @@ polycubectl connect k1:to_int eno1
 polycubectl r1 route add 0.0.0.0/0 192.168.0.254
 #polycubectl r1 address address=192.168.0.254 mac=00:62:ec:7d:72:71 interface=to_internet
 polycubectl r1 arp-table add 192.168.0.254 mac=00:62:ec:7d:72:71 interface=to_internet
+
+polycubectl lbrp lb1 service add 192.168.0.92 30000 ALL name=servicego
+
+polycubectl lbrp lb1 service 192.168.0.92 30000 TCP backend add 10.10.7.1 port=30000 name=B1 weight=10
 #sudo ip link add pc_veth_pc type veth peer name pc_veth_r1
 # Add port to br1ns
 #polycubectl br1ns ports add to_pc
