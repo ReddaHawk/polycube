@@ -1,0 +1,14 @@
+# syntax = tonistiigi/dockerfile:runmount20180618
+###############################################
+# STEP 1: using an Ubuntu 18.04 image to install the entire Polycube framework with all dependencies.
+# 
+# During this step an ubuntu image is used to compile Polycube with all its dependencies.
+# This dockerfile is reused for all the DEFAULT_MODE (default, pcn-iptables, pcn-k8s) which, thanks to install.sh and pre-requirements.sh scripts,
+# enable/disable Polycube services and install specific tools.
+FROM ubuntu:18.04
+
+ARG DEFAULT_MODE=default
+ENV MODE=$DEFAULT_MODE
+RUN --mount=target=/polycube cp -r /polycube /tmp/polycube && cd /tmp/polycube && \
+mkdir -p /usr/local/share/polycube /usr/local/include/polycube /opt/cni/bin /cni && touch /cni-conf /pcn_k8s /opt/cni/bin/polycube && \
+SUDO="" USER="root" WORKDIR="/tmp/dev" ./scripts/install.sh pcn-k8s
